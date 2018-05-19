@@ -53,7 +53,7 @@ module.exports = function (io, storage) {
         // showLog('Game will start in 5 seconds...', p.socket);
         pendingQuery.delete(p.id);
       });
-
+      game.startGame();
 
     }
 

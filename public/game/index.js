@@ -23,6 +23,7 @@ window.Game = (function () {
     });
     socket.on('player:updated', data => updatePlayers(data));
     socket.on('join:room', data => socket.emit('join:room', data));
+    socket.on('light:toggle', data => updateLight(data));
     // socket.on('console:message', message => logger.message(message));
   }
 

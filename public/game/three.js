@@ -150,6 +150,10 @@ function updatePlayers(data){
   }
 }
 
+function updateLight(data){
+  pointLight.intensity = data.intensivity;
+}
+
 function animate(){
 
   let delta2 = clock.getDelta();
@@ -157,29 +161,6 @@ function animate(){
 
   for(let i = 0; i < mixers.length; i++){
     mixers[i].update(delta2);
-  }
-
-
-  if(time > 1.9){
-    pointLight.intensity = 1;
-  }else if(time > 1.3){
-    pointLight.intensity = 0;
-  }else if(time > 0.89){
-    pointLight.intensity = 1;
-  }else if(time > 0.8){
-    pointLight.intensity = 0;
-  }else if(time > 0.75){
-    pointLight.intensity = 1;
-  }else if(time > 0.5){
-    pointLight.intensity = 0;
-  }else if(time > 0.3){
-    pointLight.intensity = 1;
-  }else if(time > 0.15){
-    pointLight.intensity = 0;
-  }
-
-  if(time > 2.5){
-    time = 0;
   }
 
   requestAnimationFrame(() => animate());
