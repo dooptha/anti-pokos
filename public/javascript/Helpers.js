@@ -9,7 +9,7 @@ window.DOM_Helpers = {
   },
   showHTML(element) {
     if (element)
-      element.style.display = 'display'
+      element.style.display = 'block'
   },
   _ajaxRequest(method, url, data, token) {
     console.log(data);

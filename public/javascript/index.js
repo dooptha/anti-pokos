@@ -7,16 +7,22 @@ const index = function () {
   const Game = window.Game;
 
   const loginButton = document.getElementById('login-button');
+  const usernameInput = document.getElementById('username');
 
   addFormListeners();
 
   function addFormListeners() {
+    usernameInput.addEventListener('keyup', function (e) {
+      e.preventDefault();
+      if (e.keyCode === 13)
+        loginButton.click();
+    });
     loginButton.addEventListener('click', e => sendLoginRequest(e))
   }
 
   function sendLoginRequest(e) {
     const data = {
-      username: document.getElementById('username').value
+      username: usernameInput.value
     };
     helpers._ajaxRequest('POST', '/login', data)
       .then(user => {

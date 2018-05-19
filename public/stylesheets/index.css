@@ -1,10 +1,17 @@
+#game-container {
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  color: white; }
+
 #login-screen {
   margin-top: 100px; }
 
 #logo {
   position: absolute;
-  left: 0;
-  bottom: 0;
+  left: 10px;
+  color: #93A3BC;
+  bottom: 5px;
   font-size: 20px; }
 
 .project-name {
@@ -41,8 +48,8 @@
 
 html, body {
   background-color: #2F323A;
-  min-height: 100%;
-  min-width: 100%;
+  min-height: 100vh;
+  min-width: 100vw;
   font-family: "Lucida Grande", Helvetica, Arial, sans-serif; }
 
 /*# sourceMappingURL=index.css.map */

@@ -10,8 +10,8 @@ window.Game = (function () {
       query: `id=${user.id}`
     });
 
-    helpers.showHTML(gameContainer);
     helpers.hideHTML(loginContainer);
+    helpers.showHTML(gameContainer);
 
     socketListeners(socket);
   }
