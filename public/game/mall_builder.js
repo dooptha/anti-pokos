@@ -1,5 +1,7 @@
 class MallBuilder{
-  constructor(){
+  constructor(data){
+    console.log(data)
+    this.data = data;
     this.meshes = new MeshesManager();
     this.models_manager = new ModelsManager(this.meshes, (state) => this.loaded(state));
     this.textures_manager = new TexturesManager((state) => this.loaded(state));
@@ -13,6 +15,7 @@ class MallBuilder{
   }
 
   loaded(state){
+
     this.ready[state] = true;
 
     if(this.ready.textures && this.ready.models){
@@ -77,48 +80,63 @@ class MallBuilder{
       child.updateMatrixWorld();
       child.children.forEach((mesh) => {
         slideList.push(mesh);
-      })
+      });
     }
   }
 
   build(){
 
-    let mat_enemy = [
-      new THREE.MeshLambertMaterial({ color: '#3C54E7' }),
-      new THREE.MeshLambertMaterial({ color: '#7F4400' }),
-      new THREE.MeshLambertMaterial({ color: '#E7DC00' }),
-      new THREE.MeshLambertMaterial({ color: 'white' }),
-      new THREE.MeshLambertMaterial({ color: 'white' }),
-      new THREE.MeshLambertMaterial({ color: '#E70900' }),
-      new THREE.MeshLambertMaterial({ color: '#482F02' })
-    ];
+    for(let i = 0; i < this.data.players.length; i++){
+      if(player.id != this.data.players[i].id){
+        if(this.data.players[i].team == 'reimu'){
+          let mat = [
+            new THREE.MeshLambertMaterial({ color: 'white' }),
+            new THREE.MeshLambertMaterial({ color: '#E7C6B8' }),
+            new THREE.MeshLambertMaterial({ color: '#E74039' }),
+            new THREE.MeshLambertMaterial({ color: '#472A0F' }),
+            new THREE.MeshLambertMaterial({ color: '#6A2401' }),
+            new THREE.MeshLambertMaterial({ color: '#000000' })
+          ];
 
-    let enemy = this.meshes.getEnemy('police', mat_enemy);
-    enemy.position.set(672, 0, 1053);
-    scene.add(enemy);
+          let reimu = new THREE.Object3D;
+
+          reimu.add(this.meshes.getPlayer('player', mat));
+          reimu.add(this.meshes.getPlayer('player_collision', mat));
+          reimu.children[1].visible = false;
+
+          reimu.position.set(this.data.players[i].position[0], this.data.players[i].position[1] - 45, this.data.players[i].position[2]);
+
+          players[this.data.players[i].id] = reimu;
+          scene.add(reimu);
+        }else{
+          let mat = [
+            new THREE.MeshLambertMaterial({ color: '#3C54E7' }),
+            new THREE.MeshLambertMaterial({ color: '#7F4400' }),
+            new THREE.MeshLambertMaterial({ color: '#E7DC00' }),
+            new THREE.MeshLambertMaterial({ color: 'white' }),
+            new THREE.MeshLambertMaterial({ color: 'white' }),
+            new THREE.MeshLambertMaterial({ color: '#E70900' }),
+            new THREE.MeshLambertMaterial({ color: '#482F02' })
+          ];
+
+          let enemy = new THREE.Object3D;
+
+          enemy.add(this.meshes.getEnemy('police', mat));
+          enemy.add(this.meshes.getPlayer('player_collision', mat));
+          enemy.children[1].visible = false;
+
+          enemy.position.set(this.data.players[i].position[0], this.data.players[i].position[1] - 45, this.data.players[i].position[2]);
+
+          players[this.data.players[i].id] = enemy;
+          scene.add(enemy);
+        }
+      }else{
+        initCamera(this.data.players[i]);
+      }
+    }
 
 
-    let mat = [
-      new THREE.MeshLambertMaterial({ color: 'white' }),
-      new THREE.MeshLambertMaterial({ color: '#E7C6B8' }),
-      new THREE.MeshLambertMaterial({ color: '#E74039' }),
-      new THREE.MeshLambertMaterial({ color: '#472A0F' }),
-      new THREE.MeshLambertMaterial({ color: '#6A2401' }),
-      new THREE.MeshLambertMaterial({ color: '#000000' })
-    ];
 
-    player = this.meshes.getPlayer('player', mat);
-    player.position.set(872, 0, 1053);
-    scene.add(player);
-
-    action.stay.play();
-
-    console.log(player);
-
-    player_collision = this.meshes.getPlayer('player_collision', mat);
-    player_collision.position.set(872, 0, 1053);
-    player.add(player_collision);
-    scene.add(player_collision);
     //detection_meshes.push(player_collision);
 
     this.stores_builder = new StoresManager(this.meshes, this.textures_manager);

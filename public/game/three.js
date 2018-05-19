@@ -1,4 +1,4 @@
-var camera, scene, light_col, mixers = [], action = {}, player_collision, pointl_col, player, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
+var camera, scene, light_col, enemies = [], players = {}, mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
 
 function initThreeJs(){
   scene = new THREE.Scene();
@@ -108,6 +108,36 @@ function initThreeJs(){
 
   clock = new THREE.Clock();
 
+  setInterval(() => {
+
+    let data = {
+      position: controls.getObject().position,
+      rotation: controls.getObject().rotation,
+      id: player.id
+    };
+
+    window.socket.emit('player:update', { gameId, data });
+  }, 100);
+}
+
+function initCamera(data){
+  console.log(data)
+
+  let position = data.position;
+  controls.getObject().position.set(position[0], position[1] + 45, position[2]);
+}
+
+function updatePlayers(data){
+
+  const { id, position, rotation } = data;
+
+  if(id != player.id){
+    if(players[id]){
+      players[id].position.set(position.x, position.y - 45, position.z);
+    }else{
+      console.log('no such player')
+    }
+  }
 }
 
 function animate(){
@@ -147,7 +177,7 @@ function animate(){
   keyAssigment(delta2);
   updateCurrenPositionLabel();
 
-  let isMoving = false;
+  /*let isMoving = false;
   let keys = Object.keys(keyPressed);
   for(let i = 0; i < keys.length; i++){
     if(keyPressed[keys[i]]){ isMoving = true; break; }
@@ -158,7 +188,7 @@ function animate(){
     coof += p;
     controls.getObject().position.y += p;
     controls.getObject().rotation.y += (cink / 48) * delta2;
-  }
+  }*/
 
   tcamera = controls.getObject().clone();
   tcamera.translateZ(-10);

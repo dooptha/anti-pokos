@@ -1,7 +1,7 @@
 let models_count = 7, models_loaded = 0,
   pikalka, st, mt, kokoro, kokoro_roof, roof, gift, proof;
 
-function startGame(){
+function startGame(data){
   var blocker = document.getElementById( 'blocker' );
   var instructions = document.getElementById( 'instructions' );
 
@@ -63,21 +63,21 @@ function startGame(){
 
   initThreeJs();
   prepareScene();
-  start();
+  start(data);
 }
 
 function updateCurrenPositionLabel(){
 
-  label.innerHTML = `
+  /*label.innerHTML = `
     current position:
     x: ${controls.getObject().position.x.toFixed(2)}
     z: ${controls.getObject().position.z.toFixed(2)}
     y: ${controls.getObject().position.y.toFixed(2)}
     ${window.innerWidth}
     ${window.innerHeight}
-  `;
+  `;*/
 
-  if(player){
+  if(false){
     label.innerHTML += `<br />
     mesh position:
     x: ${player.position.x.toFixed(2)}
@@ -87,6 +87,6 @@ function updateCurrenPositionLabel(){
   }
 }
 
-function start(){
-  let st = new MallBuilder();
+function start(data){
+  let st = new MallBuilder(data);
 }

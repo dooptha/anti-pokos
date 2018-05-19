@@ -1,6 +1,6 @@
 window.Game = (function () {
   const helpers = window.DOM_Helpers;
-  let player = null;
+  window.player = null;
 
   function load(user) {
     const gameContainer = document.getElementById('game-container');
@@ -14,11 +14,15 @@ window.Game = (function () {
     helpers.showHTML(gameContainer);
 
     socketListeners();
-    startGame();
   }
 
   function socketListeners() {
-    socket.on('start:game', data => console.log(data));
+    socket.on('start:game', data => {
+      window.gameId = data.id;
+      startGame(data);
+    });
+    socket.on('player:updated', data => updatePlayers(data));
+    socket.on('join:room', data => socket.emit('join:room', data));
     // socket.on('console:message', message => logger.message(message));
   }
 

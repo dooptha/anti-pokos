@@ -26,20 +26,20 @@ function keyAssigment(delta){
   }
 
   if(keyPressed[KEY.LEFT]){
-    player_collision.position.x+= config.movement_speed * delta;
-    player.position.x+= config.movement_speed * delta;
+    //player_collision.position.x+= config.movement_speed * delta;
+    //player.position.x+= config.movement_speed * delta;
   }
   if(keyPressed[KEY.RIGHT]){
-    player_collision.position.x-= config.movement_speed * delta;
-    player.position.x-= config.movement_speed * delta;
+    //player_collision.position.x-= config.movement_speed * delta;
+    //player.position.x-= config.movement_speed * delta;
   }
   if(keyPressed[KEY.UP]){
-    player_collision.position.z+= config.movement_speed * delta;
-    player.position.z+= config.movement_speed * delta;
+    //player_collision.position.z+= config.movement_speed * delta;
+    //player.position.z+= config.movement_speed * delta;
   }
   if(keyPressed[KEY.DOWN]){
-    player_collision.position.z-= config.movement_speed * delta;
-    player.position.z-= config.movement_speed * delta;
+    //player_collision.position.z-= config.movement_speed * delta;
+    //player.position.z-= config.movement_speed * delta;
   }
 
   if(keyPressed[KEY.W]) mov_z = -config.movement_speed;
@@ -127,7 +127,7 @@ function keyAssigment(delta){
 
   // LIGHT
 
-  let firstBB = new THREE.Box3().setFromObject(light_col);
+  /*let firstBB = new THREE.Box3().setFromObject(light_col);
   let secondBB = new THREE.Box3().setFromObject(player_collision);
 
   let firstCC = new THREE.Box3().setFromObject(pointl_col);
@@ -139,5 +139,5 @@ function keyAssigment(delta){
 
   var collision = firstBB.intersectsBox(secondBB);
   if(collision){
-  }
+  }*/
 }
