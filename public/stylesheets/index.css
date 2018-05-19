@@ -3,6 +3,8 @@
   width: 100%;
   text-align: center;
   color: white; }
+  #game-container #instructions:hover {
+    cursor: pointer; }
 
 #console-container {
   position: absolute;
