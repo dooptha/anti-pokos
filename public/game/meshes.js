@@ -80,7 +80,6 @@ class MeshesManager{
     return mesh;}
 
   getEnemy(name, materials){
-    console.log(this.models)
     let mesh = new THREE.SkinnedMesh(this.models[name].geometry, materials);
 
     mesh.scale.set(3.5, 3.5, 3.5);

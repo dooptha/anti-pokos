@@ -1,12 +1,11 @@
 window.Game = (function () {
   const helpers = window.DOM_Helpers;
   const consoleContainer = document.getElementById('console-container');
-  let player = null;
 
   function load(user) {
     const gameContainer = document.getElementById('game-container');
     const loginContainer = document.getElementById('login-container');
-    player = user;
+    window.player = user;
     window.socket = io({
       query: `id=${user.id}`
     });
@@ -15,12 +14,18 @@ window.Game = (function () {
     helpers.showHTML(gameContainer);
 
     socketListeners();
-    startGame();
   }
 
   function socketListeners() {
-    socket.on('start:game', data => console.log(data));
     socket.on('console:message', message => logger.message(message));
+    socket.on('start:game', data => {
+      window.gameId = data.id;
+      startGame(data);
+    });
+    socket.on('player:updated', data => updatePlayers(data));
+    socket.on('join:room', data => socket.emit('join:room', data));
+    socket.on('light:toggle', data => updateLight(data));
+    // socket.on('console:message', message => logger.message(message));
   }
 
   const logger = (function() {

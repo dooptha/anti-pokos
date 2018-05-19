@@ -1,4 +1,4 @@
-var camera, scene, light_col, mixers = [], action = {}, player_collision, pointl_col, player, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
+var camera, scene, light_col, player_collusion, freezed = false, enemies = [], players = {}, lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
 
 function initThreeJs(){
   scene = new THREE.Scene();
@@ -8,10 +8,6 @@ function initThreeJs(){
   let sky_color = 'black';
 
   let m = new THREE.MeshLambertMaterial({ color: 'red' });
-
-  // NIGHT VISION
-  //var light = new THREE.AmbientLight('rgb(30, 73, 12)'); // soft white light
-  //scene.add( light );
 
   pointLight = new THREE.PointLight('white', 0.5, 250);
   pointLight.position.set(872, 100, 1053);
@@ -30,28 +26,6 @@ function initThreeJs(){
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.autoUpdate = false;
 
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-
-  spotlight = new THREE.SpotLight(0xffffff, 1.25, 450, Math.PI / 8, 0.5, 1);
-
-  let g = new THREE.BoxGeometry(100, 10, 370);
-  light_col = new THREE.Mesh(g, m);
-  light_col.visible = false;
-
-  let l = new THREE.PointLight('white', 1, 1000);
-  l.position.set(1000,100,1000)
-
-  //scene.add(l)
-
-  camera.add(light_col);
-  camera.add(spotlight);
-  light_col.position.set(0,-35,-250);
-  spotlight.position.set(0,10,20)
-  scene.add(camera);
-
-  scene.add(flashlight);
-  spotlight.target = flashlight;
-
   //scene.fog = new THREE.Fog(sky_color, 1400, 1500);
 
   rendererStats	= new THREEx.RendererStats()
@@ -61,11 +35,6 @@ function initThreeJs(){
   rendererStats.domElement.style.bottom	= '0px'
   parent_block.appendChild( rendererStats.domElement )
 
-  controls = new THREE.PointerLockControls(camera);
-  scene.add( controls.getObject() );
-
-  controls.getObject().position.set(902, 45, 1055);
-  controls.getObject().lookAt(new THREE.Vector3(1050, 45, 1055));
   parent_block.appendChild(renderer.domElement);
 
   label = document.createElement('div');
@@ -107,7 +76,82 @@ function initThreeJs(){
   let texture = new THREE.TextureLoader().load('./sky.jpg', (t) => hasLoaded(t), null, null );*/
 
   clock = new THREE.Clock();
+}
 
+function initCamera(data){
+
+  player.team = data.team;
+
+  if(data.team == 'kaban'){
+    var light = new THREE.AmbientLight('rgb(9, 36, 5)'); // soft white light
+    scene.add( light );
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+
+    let m = new THREE.MeshLambertMaterial({ color: 'red' });
+    let g = new THREE.BoxGeometry(40, 10, 40);
+
+    player_collusion = new THREE.Mesh(g, m);
+    player_collusion.position.set(0,-35,0);
+    camera.add(player_collusion);
+    scene.add(camera);
+  }else if(data.team == 'reimu'){
+    let m = new THREE.MeshLambertMaterial({ color: 'red' });
+
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+
+    spotlight = new THREE.SpotLight(0xffffff, 1.75, 450, Math.PI / 8, 1, 1);
+
+    let g = new THREE.BoxGeometry(100, 10, 370);
+    light_col = new THREE.Mesh(g, m);
+    light_col.visible = false;
+
+    //scene.add(l)
+
+    camera.add(light_col);
+    camera.add(spotlight);
+    light_col.position.set(0,-35,-250);
+    spotlight.position.set(0,10,20);
+    scene.add(camera);
+
+    scene.add(flashlight);
+    spotlight.target = flashlight;
+  }
+
+  controls = new THREE.PointerLockControls(camera);
+  scene.add(controls.getObject());
+
+  let position = data.position;
+  controls.getObject().position.set(position[0], position[1] + 45, position[2]);
+  controls.getObject().lookAt(new THREE.Vector3(1050, 45, 1055));
+
+  setInterval(() => {
+
+    let data = {
+      position: controls.getObject().position,
+      rotation: controls.getObject().rotation,
+      id: player.id
+    };
+
+    window.socket.emit('player:update', { gameId, data });
+  }, 100);
+}
+
+function updatePlayers(data){
+
+  const { id, position, rotation } = data;
+
+  if(id != player.id){
+    if(players[id]){
+      players[id].position.set(position.x, position.y - 45, position.z);
+      players[id].rotation.set(rotation._x, rotation._y, rotation._z);
+    }else{
+      console.log('no such player')
+    }
+  }
+}
+
+function updateLight(data){
+  pointLight.intensity = data.intensivity;
 }
 
 function animate(){
@@ -119,35 +163,12 @@ function animate(){
     mixers[i].update(delta2);
   }
 
-
-  if(time > 1.9){
-    pointLight.intensity = 1;
-  }else if(time > 1.3){
-    pointLight.intensity = 0;
-  }else if(time > 0.89){
-    pointLight.intensity = 1;
-  }else if(time > 0.8){
-    pointLight.intensity = 0;
-  }else if(time > 0.75){
-    pointLight.intensity = 1;
-  }else if(time > 0.5){
-    pointLight.intensity = 0;
-  }else if(time > 0.3){
-    pointLight.intensity = 1;
-  }else if(time > 0.15){
-    pointLight.intensity = 0;
-  }
-
-  if(time > 2.5){
-    time = 0;
-  }
-
   requestAnimationFrame(() => animate());
 
   keyAssigment(delta2);
   updateCurrenPositionLabel();
 
-  let isMoving = false;
+  /*let isMoving = false;
   let keys = Object.keys(keyPressed);
   for(let i = 0; i < keys.length; i++){
     if(keyPressed[keys[i]]){ isMoving = true; break; }
@@ -158,7 +179,7 @@ function animate(){
     coof += p;
     controls.getObject().position.y += p;
     controls.getObject().rotation.y += (cink / 48) * delta2;
-  }
+  }*/
 
   tcamera = controls.getObject().clone();
   tcamera.translateZ(-10);

@@ -25,7 +25,7 @@ module.exports = function (io, storage) {
     socket.join(ROOMS.PENDING);
     pendingQuery.set(player.id, player);
 
-    if (pendingQuery.size === 3) {
+    if (pendingQuery.size === 2) {
       startGame();
     }
 
@@ -37,8 +37,13 @@ module.exports = function (io, storage) {
     });
 
     socket.on('join:room', function (roomName) {
+      console.log(roomName);
       socket.join(roomName);
     });
+
+    socket.on('player:update', function(response){
+      io.to(response.gameId).emit('player:updated', response.data);
+    })
 
     function startGame() {
       const players = pendingQuery.values();
@@ -50,6 +55,8 @@ module.exports = function (io, storage) {
         // showLog('Game will start in 5 seconds...', p.socket);
         pendingQuery.delete(p.id);
       });
+      game.startGame();
+
     }
 
     function showLog(message, target = socket.id) {
