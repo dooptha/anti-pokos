@@ -9,10 +9,6 @@ function initThreeJs(){
 
   let m = new THREE.MeshLambertMaterial({ color: 'red' });
 
-  // NIGHT VISION
-  //var light = new THREE.AmbientLight('rgb(30, 73, 12)'); // soft white light
-  //scene.add( light );
-
   pointLight = new THREE.PointLight('white', 0.5, 250);
   pointLight.position.set(872, 100, 1053);
   scene.add(pointLight);
@@ -121,7 +117,11 @@ function initThreeJs(){
 }
 
 function initCamera(data){
-  console.log(data)
+
+  if(data.team == 'kaban'){
+    var light = new THREE.AmbientLight('rgb(50, 228, 29)'); // soft white light
+    scene.add( light );
+  }
 
   let position = data.position;
   controls.getObject().position.set(position[0], position[1] + 45, position[2]);
@@ -134,6 +134,7 @@ function updatePlayers(data){
   if(id != player.id){
     if(players[id]){
       players[id].position.set(position.x, position.y - 45, position.z);
+      players[id].rotation.set(rotation._x, rotation._y, rotation._z);
     }else{
       console.log('no such player')
     }
