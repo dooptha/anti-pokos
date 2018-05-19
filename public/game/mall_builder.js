@@ -104,8 +104,25 @@ class MallBuilder{
           reimu.add(this.meshes.getPlayer('player_collision', mat));
           reimu.children[1].visible = false;
 
+          // light
+
+          let flashlight = new THREE.SpotLight(0xffffff, 1.25, 450, Math.PI / 8, 0.5, 1);
+          flashlight.position.set(0,45,0);
+          flashlight.target.position.set(0,40,-200);
+
+          let m = new THREE.MeshLambertMaterial({ color: 'red' });
+          let g = new THREE.BoxGeometry(100, 10, 350);
+          light_col = new THREE.Mesh(g, m);
+          light_col.visible = false;
+          light_col.position.set(0,10,-240);
+
+          reimu.add(light_col);
+          reimu.add(flashlight);
+          reimu.add(flashlight.target);
+
           reimu.position.set(this.data.players[i].position[0], this.data.players[i].position[1] - 45, this.data.players[i].position[2]);
 
+          lights.push(light_col);
           players[this.data.players[i].id] = reimu;
           scene.add(reimu);
         }else{
@@ -131,7 +148,7 @@ class MallBuilder{
           scene.add(enemy);
         }
       }else{
-        initCamera(this.data.players[i]);
+        initCamera(this.data.players[i], this.meshes.getPlayer('player_collision', [new THREE.MeshLambertMaterial({ color: 'red' })]));
       }
     }
 
