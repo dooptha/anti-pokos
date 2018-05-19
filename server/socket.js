@@ -17,6 +17,9 @@ module.exports = function (io, storage) {
 
     const player = storage.get(id);
 
+    if(!player)
+      return true;
+
     player.setSocket(socket.id);
 
     socket.join(ROOMS.PENDING);

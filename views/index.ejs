@@ -4,8 +4,8 @@
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/lib/bulma.css' />
     <link rel='stylesheet' href='/stylesheets/index.css' />
-    <script src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/87/three.js'></script>
-    <script src = 'http://tdhooper.github.io/threejs-slice-geometry/build/slice.min.js'></script>
+    <script src = '/game/three-lib.js'></script>
+    <script src = '/game/slice.min.js'></script>
     <script src = '/game/utils.js'></script>
     <script src = '/game/levels/1.js'></script>
     <script src = '/game/config.js'></script>
@@ -22,6 +22,9 @@
     <script src = '/game/controls.js'></script>
     <script src = '/game/three.js'></script>
     <script src = '/game/builder.js'></script>
+    <script src="/javascript/lib/socket.io.js"></script>
+    <script src="/javascript/Helpers.js"></script>
+    <script src="/game/index.js"></script>
   </head>
   <body>
   <div id="login-container">
@@ -47,9 +50,6 @@
 			</div>
 		</div>
   </div>
-  <script src="/javascript/lib/socket.io.js"></script>
-  <script src="/javascript/Helpers.js"></script>
-  <script src="/game/index.js"></script>
   <script src="/javascript/index.js"></script>
   </body>
 </html>
