@@ -4,6 +4,29 @@
   text-align: center;
   color: white; }
 
+#console-container {
+  position: absolute;
+  top: 100px;
+  right: 10px;
+  background-color: transparent;
+  height: 220px;
+  width: 200px;
+  overflow: hidden; }
+  #console-container .message {
+    width: 100%;
+    height: 40px;
+    padding-bottom: 0;
+    margin-bottom: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px dotted pink; }
+    #console-container .message span.reimu {
+      color: red; }
+    #console-container .message span.kaban {
+      color: aqua; }
+    #console-container .message span.anon {
+      color: #1ca64c; }
+
 #login-screen {
   margin-top: 100px; }
 

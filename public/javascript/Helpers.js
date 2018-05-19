@@ -54,5 +54,9 @@ window.DOM_Helpers = {
       }
     }
   },
-
+  removeElement(element) {
+    if(!element)
+      return false;
+    return element.parentNode.removeChild(element);
+  }
 };

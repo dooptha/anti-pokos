@@ -1,55 +1,59 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/lib/bulma.css' />
-    <link rel='stylesheet' href='/stylesheets/index.css' />
-    <script src = '/game/three-lib.js'></script>
-    <script src = '/game/slice.min.js'></script>
-    <script src = '/game/utils.js'></script>
-    <script src = '/game/levels/1.js'></script>
-    <script src = '/game/config.js'></script>
-    <script src = '/game/pointer_lock.js'></script>
-    <script src = '/game/items_builder.js'></script>
-    <script src = '/game/meshes.js'></script>
-    <script src = '/game/stats.js'></script>
-    <script src = '/game/constants.js'></script>
-    <script src = '/game/textures_manager.js'></script>
-    <script src = '/game/models_manager.js'></script>
-    <script src = '/game/stores_manager.js'></script>
-    <script src = '/game/mall_builder.js'></script>
-    <script src = '/game/prepare_scene.js'></script>
-    <script src = '/game/controls.js'></script>
-    <script src = '/game/three.js'></script>
-    <script src = '/game/builder.js'></script>
+    <link rel='stylesheet' href='/stylesheets/lib/bulma.css'/>
+    <link rel='stylesheet' href='/stylesheets/index.css'/>
+    <script src='/game/three-lib.js'></script>
+    <script src='/game/slice.min.js'></script>
+    <script src='/game/utils.js'></script>
+    <script src='/game/levels/1.js'></script>
+    <script src='/game/config.js'></script>
+    <script src='/game/pointer_lock.js'></script>
+    <script src='/game/items_builder.js'></script>
+    <script src='/game/meshes.js'></script>
+    <script src='/game/stats.js'></script>
+    <script src='/game/constants.js'></script>
+    <script src='/game/textures_manager.js'></script>
+    <script src='/game/models_manager.js'></script>
+    <script src='/game/stores_manager.js'></script>
+    <script src='/game/mall_builder.js'></script>
+    <script src='/game/prepare_scene.js'></script>
+    <script src='/game/controls.js'></script>
+    <script src='/game/three.js'></script>
+    <script src='/game/builder.js'></script>
     <script src="/javascript/lib/socket.io.js"></script>
     <script src="/javascript/Helpers.js"></script>
-    <script src="/game/index.js"></script>
-  </head>
-  <body>
-  <div id="login-container">
+</head>
+<body>
+<div id="login-container">
     <div class="columns is-centered is-mobile is-multiline has-text-centered">
-      <div class="column is-12 project-name"><%= title %></div>
-      <div class="column is-narrow">
-        <div class="login-form">
-          <label class="label username" for="username">enter your username</label>
-          <input id="username" placeholder="Pukich" name="username" type="text"/>
-          <br>
-          <button id="login-button" class="button is-primary">Play!</button>
+        <div class="column is-12 project-name"><%= title %></div>
+        <div class="column is-narrow">
+            <div class="login-form">
+                <label class="label username" for="username">enter your
+                    username</label>
+                <input id="username" placeholder="Pukich" name="username"
+                       type="text"/>
+                <br>
+                <button id="login-button" class="button is-primary">Play!
+                </button>
+            </div>
         </div>
-      </div>
     </div>
     <div id="logo">Triple Baka Production</div>
-  </div>
-  <div id="game-container" style="display: none;">
+</div>
+<div id="game-container" style="display: none;">
+    <div id="console-container"></div>
     <div id="blocker">
-			<div id="instructions">
-				<span style="font-size:40px">Click to play</span>
-				<br />
-				(W, A, S, D = Move, SPACE = Jump, MOUSE = Look around)
-			</div>
-		</div>
-  </div>
-  <script src="/javascript/index.js"></script>
-  </body>
+        <div id="instructions">
+            <span style="font-size:40px">Click to play</span>
+            <br/>
+            (W, A, S, D = Move, SPACE = Jump, MOUSE = Look around)
+        </div>
+    </div>
+</div>
+<script src="/game/index.js"></script>
+<script src="/javascript/index.js"></script>
+</body>
 </html>

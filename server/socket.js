@@ -29,6 +29,8 @@ module.exports = function (io, storage) {
       startGame();
     }
 
+    showLog(`Hello, <span class="anon">${player.username}</span>!`);
+
     socket.on('disconnect', function () {
       pendingQuery.delete(player.id);
       storage.delete(player.id);
