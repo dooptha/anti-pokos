@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=20, initial-scale=1">
+    <title></title>
+    <style>
+      .controls{
+        width: 20%;
+        height: 100px;
+        cursor: pointer;
+        text-align: center;
+        background-color: green;
+        display: inline-block;
+
+        -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+      }
+    </style>
+</script>
+    <script>
+
+    </script>
+  </head>
+  <body>
+    
+    <script>
+
+      var blocker = document.getElementById( 'blocker' );
+      var instructions = document.getElementById( 'instructions' );
+
+      var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+
+      if ( havePointerLock ) {
+      var element = document.body;
+
+      var pointerlockchange = function ( event ) {
+
+        if(document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element){
+          controlsEnabled = true;
+          controls.enabled = true;
+          blocker.style.display = 'none';
+        }else{
+          controls.enabled = false;
+          blocker.style.display = 'block';
+          instructions.style.display = '';
+        }
+      };
+
+      var pointerlockerror = function ( event ) {
+        instructions.style.display = '';
+      };
+
+      // Hook pointer lock state change events
+      document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+      document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+      document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+
+      document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+      document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+      document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+
+      instructions.addEventListener( 'click', function ( event ) {
+        instructions.style.display = 'none';
+
+        // Ask the browser to lock the pointer
+        element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+        element.requestPointerLock();
+      }, false );
+      }else{
+        instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+      }
+
+      var controlsEnabled = false;
+
+      var moveForward = false;
+      var moveBackward = false;
+      var moveLeft = false;
+      var moveRight = false;
+      var canJump = false;
+
+      var prevTime = performance.now();
+      var velocity = new THREE.Vector3();
+      var direction = new THREE.Vector3();
+      var vertex = new THREE.Vector3();
+      var color = new THREE.Color();
+
+      initThreeJs();
+      prepareScene();
+      start();
+    </script>
+  </body>
+</html>

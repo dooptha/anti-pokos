@@ -1,0 +1,546 @@
+
+function updateCurrenPositionLabel(){
+
+  label.innerHTML = `
+    current position:
+    x: ${camera.position.x.toFixed(2)}
+    z: ${camera.position.z.toFixed(2)}
+    y: ${camera.position.y.toFixed(2)}`;
+}
+
+function generateRoom(){
+
+  let ggg = new THREE.Geometry();
+  let ggg_add = new THREE.Geometry();
+
+  let topbar_height = 25;
+
+  let wall_material = new THREE.MeshLambertMaterial({ color: 'rgb(150,150,150)', side: THREE.DoubleSide, wireframe: false });
+  let add_wall_material = new THREE.MeshLambertMaterial({ color: 'rgb(180,180,180)', side: THREE.DoubleSide, wireframe: false });
+
+  let ff = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshBasicMaterial({ color: 'rgb(217,217,217)', side: THREE.DoubleSide }))
+  ff.rotateX(90 * Math.PI / 180);
+  ff.position.set(0,0,0)
+  scene.add(ff)
+
+  let roof_material = new THREE.MeshLambertMaterial({ color: 'rgb(250,250,250)', side: THREE.DoubleSide, wireframe: false });
+  let wall_l = new THREE.PlaneGeometry(config.cell_length, config.cell_height * 2);
+
+  let roof_g = new THREE.PlaneGeometry(config.cell_length * 3, config.cell_width * 4);
+
+
+  let palet_h_m = new THREE.BoxGeometry(config.cell_length * 4, 8, 8);
+  let palet_v_m = new THREE.BoxGeometry(8, config.cell_height * 2, 8);
+
+  let big_glass_g = new THREE.PlaneGeometry(config.cell_length, config.cell_height);
+
+  let glass_material = new THREE.MeshLambertMaterial({ color: '#3d8e9c', side: THREE.DoubleSide, transparent: true, opacity: 0.3 });
+  let glass_lgeometry = new THREE.PlaneGeometry(config.cell_length / 3, config.cell_height - topbar_height);
+  let glass_wgeometry = new THREE.PlaneGeometry(config.cell_width, config.cell_height - topbar_height);
+  let glass_l = new THREE.Mesh(glass_lgeometry, glass_material);
+  let glass_w = new THREE.Mesh(glass_wgeometry, glass_material);
+  let big_glass_m = new THREE.Mesh(big_glass_g, glass_material);
+
+  let floor = new THREE.PlaneGeometry(config.cell_width, config.cell_length);
+
+  let topbar = new THREE.BoxGeometry(config.cell_length, topbar_height, 5);
+
+  /* BSP */
+
+  let rf_g = new THREE.PlaneGeometry(config.cell_length * 4, config.cell_length);
+  let rf_m = new THREE.Mesh(rf_g, roof_material)
+
+  let p1, st, mt, kokoro, gift;
+  let pikalka_group = new THREE.Object3D();
+  let models_loaded = 0, models_count = 6;
+
+  function addPikalka(geometry, materials){
+    p1 = geometry;
+    p1.scale(5,5,5);
+    p1.rotateY(90 * Math.PI / 180);
+
+    models_loaded++;
+    if(models_count == models_loaded) loadMaze();
+  }
+
+  function addSTymb(geometry, materials){
+    st = geometry
+    st.scale(12,12,12)
+
+    models_loaded++;
+    if(models_count == models_loaded) loadMaze();
+  }
+
+  function addMTymb(geometry, materials){
+    mt = geometry
+    mt.scale(12,12,12)
+
+    models_loaded++;
+    if(models_count == models_loaded) loadMaze();
+  }
+
+  function addKokoro(geometry, materials){
+    kokoro = geometry
+    kokoro.scale(10,10,10)
+
+    models_loaded++;
+    if(models_count == models_loaded) loadMaze();
+  }
+
+  function addKokoroRoof(geometry, materials){
+    kokoro_roof = geometry
+    kokoro_roof.scale(12,12,12)
+
+    models_loaded++;
+    if(models_count == models_loaded) loadMaze();
+  }
+
+  function addBoots(texture){
+    texture.minFilter = THREE.LinearFilter;
+    let gift_m = new THREE.SpriteMaterial({ map: texture });
+    gift = new THREE.Sprite(gift_m);
+    gift.scale.set(12,20)
+    console.log(gift)
+    models_loaded++;
+    if(models_count == models_loaded) loadMaze();
+  }
+
+  let tloader = new THREE.TextureLoader();
+  tloader.load('./boots.png', (texture) => addBoots(texture));
+
+  var loader = new THREE.JSONLoader();
+  loader.load("./pikalka.json", (geometry, materials) => addPikalka(geometry, materials))
+  loader.load("./small_tymb.json", (geometry, materials) => addSTymb(geometry, materials))
+  loader.load("./medium_tymb.json", (geometry, materials) => addMTymb(geometry, materials))
+  loader.load("./kokoro.json", (geometry, materials) => addKokoro(geometry, materials))
+  loader.load("./kokoro_roof.json", (geometry, materials) => addKokoroRoof(geometry, materials))
+
+  function addToCol(group){
+    for(let i = 0; i < group.children.length; i++){
+      if(group.children[i].children && group.children[i].userData.colable && group.children[i].children.length > 0){
+        for(let k = 0; k < group.children[i].children.length; k++){
+          collidableMeshList.push(group.children[i].children[k]);
+        }
+      }
+    }
+  }
+
+  function loadMaze(){
+    console.log('load maze')
+
+    function toLocal(mesh, m){
+      if(m == 1){
+        mesh.rotateY(180 * Math.PI / 180);
+        mesh.translate(0,0,-config.cell_length);
+      }else if(m == 2){
+        mesh.rotateY(90 * Math.PI / 180);
+        mesh.translate(config.cell_width * 2 + config.cell_length, 0, 0);
+      }else if(m == 3){
+        mesh.rotateY(270 * Math.PI / 180);
+        mesh.translate(config.cell_width + config.cell_length, 0, config.cell_length * 4);
+      }
+
+      return mesh;
+    }
+
+    function calculateBufferPosition(mesh, m, i){
+      mesh.translate(-config.cell_length * i, 0, 0)
+
+      if(m == 1){
+        mesh.rotateY(180 * Math.PI / 180);
+        mesh.translate(0,0,-config.cell_length);
+      }else if(m == 2){
+        mesh.rotateY(90 * Math.PI / 180);
+        mesh.translate(config.cell_width * 2 + config.cell_length, 0, 0);
+      }else if(m == 3){
+        mesh.rotateY(270 * Math.PI / 180);
+        mesh.translate(config.cell_width + config.cell_length, 0, config.cell_length * 4);
+      }
+
+      return mesh;
+    }
+
+    for(let m = 0; m < 4; m++){
+
+      let main_group = new THREE.Object3D();
+      let main_group2 = new THREE.Object3D();
+
+      for(let i = 0; i < 4; i++){
+
+        let colable_group = new THREE.Object3D();
+        let group = new THREE.Object3D();
+
+        let pp1 = p1.clone();
+        let pp2 = p1.clone();
+        pp1.translate(124, 0, 25);
+        pp1 = calculateBufferPosition(pp1, m, i)
+        pp2.translate(65, 0, 25);
+        pp2 = calculateBufferPosition(pp2, m, i)
+
+        ggg_add.merge(pp1)
+        ggg_add.merge(pp2)
+
+        let glass_1 = glass_l.clone();
+        let glass_2 = glass_l.clone();
+
+        let palet_v = palet_v_m.clone();
+
+        let wall_2 = wall_l.clone();
+        let wall_3 = wall_l.clone();
+        let wall_4 = wall_l.clone();
+
+        let topbar_1 = topbar.clone();
+
+        let floor_1 = floor.clone();
+
+        let big_glass = big_glass_m.clone();
+
+        glass_1.position.set(config.cell_length / 6, config.cell_height / 2 - topbar_height / 2, 2.5);
+        glass_2.position.set(config.cell_length / 6 * 5, config.cell_height / 2 - topbar_height / 2, 2.5);
+
+        big_glass.position.set(config.cell_length / 2, config.cell_height + config.cell_height / 2, 2.5)
+
+
+        wall_2.translate(config.cell_length / 2, config.cell_height, config.cell_width);
+        wall_2 = calculateBufferPosition(wall_2, m, i)
+        ggg.merge(wall_2)
+
+        wall_3.rotateY(90 * Math.PI / 180);
+        wall_3.translate(0, config.cell_height, config.cell_width / 2);
+        wall_3 = calculateBufferPosition(wall_3, m, i)
+        ggg.merge(wall_3)
+
+        wall_4.rotateY(90 * Math.PI / 180);
+        wall_4.translate(config.cell_length, config.cell_height, config.cell_width / 2);
+        wall_4 = calculateBufferPosition(wall_4, m, i)
+        ggg.merge(wall_4)
+
+
+        palet_v.translate(config.cell_length, config.cell_height, 0)
+        palet_v = calculateBufferPosition(palet_v, m, i)
+        ggg.merge(palet_v)
+
+        floor_1.rotateX(90 * Math.PI / 180);
+        floor_1.translate(config.cell_length / 2, config.cell_height, config.cell_width / 2);
+        floor_1 = calculateBufferPosition(floor_1, m, i)
+
+
+        topbar_1.translate(config.cell_length / 2, config.cell_height - topbar_height / 2, 2.5);
+        topbar_1 = calculateBufferPosition(topbar_1, m, i)
+
+        ggg.merge(topbar_1);
+        ggg.merge(floor_1);
+
+        /*  GIFT */
+
+        let gift1 = gift.clone();
+        gift1.position.set(config.cell_length - 30, 26.5, config.cell_length - 13);
+        group.add(gift1)
+
+        let gift2 = gift.clone();
+        gift2.position.set(config.cell_length - 100, 26.5, config.cell_length - 13);
+        group.add(gift2)
+
+        /* KOKORO */
+
+        let kokoro1 = kokoro.clone();
+        kokoro1.rotateY(90 * Math.PI / 180);
+        kokoro1.translate(20,0,100);
+        kokoro1 = calculateBufferPosition(kokoro1, m, i)
+        ggg_add.merge(kokoro1)
+
+        let gift4 = gift.clone();
+        gift4.position.set(20, 18, 95);
+        group.add(gift4)
+
+        let kokoror1 = kokoro_roof.clone();
+        kokoror1.translate(100,config.cell_height - 5,100);
+        kokoror1 = calculateBufferPosition(kokoror1, m, i)
+        ggg_add.merge(kokoror1)
+
+        /* POLKA */
+
+        let polka = new THREE.BoxGeometry(config.cell_length - 40, 1.5, 20);
+        let polkax = new THREE.BoxGeometry(config.cell_length - 40, 1.5, 12);
+
+        let polka1 = polka.clone();
+        polka1.translate(config.cell_length / 2 + 20 - 1, 20, config.cell_length - 10)
+        polka1 = calculateBufferPosition(polka1, m, i)
+        ggg_add.merge(polka1)
+
+        let polka2 = polka.clone();
+        polka2.rotateY(90 * Math.PI / 180)
+        polka2.translate(config.cell_length - 10 - 1, 20, config.cell_length / 2)
+        polka2 = calculateBufferPosition(polka2, m, i)
+        ggg_add.merge(polka2)
+
+        let polka3 = polkax.clone();
+        polka3.translate(config.cell_length / 2 + 20 - 1, 40, config.cell_length - 6)
+        polka3 = calculateBufferPosition(polka3, m, i)
+        ggg_add.merge(polka3)
+
+        let polka4 = polkax.clone();
+        polka4.rotateY(90 * Math.PI / 180)
+        polka4.translate(config.cell_length - 6 - 1, 40, config.cell_length / 2 + 10)
+        polka4 = calculateBufferPosition(polka4, m, i)
+        ggg_add.merge(polka4)
+
+        /* TYMBO4KA */
+
+        st1 = st.clone();
+        mt1 = mt.clone();
+
+        st1.translate(95,-1,80)
+        st1 = calculateBufferPosition(st1, m, i)
+        ggg_add.merge(st1)
+
+        mt1.translate(80,-1,95)
+        mt1 = calculateBufferPosition(mt1, m, i)
+        ggg_add.merge(mt1)
+
+        let gift3 = gift.clone();
+        gift3.position.set(80, 25, 95);
+        group.add(gift3)
+
+        colable_group.add(glass_1);
+        colable_group.add(glass_2);
+
+
+        //colable_group.add(wall_2);
+
+        group.add(big_glass);
+
+        group.position.set(-config.cell_length * i, 0, 0)
+        colable_group.position.set(-config.cell_length * i, 0, 0)
+
+        colable_group.userData = { colable: true }
+
+        main_group.add(group)
+        main_group.add(colable_group)
+      }
+
+      let rf = rf_m.clone()
+      rf.position.set(-config.cell_length, config.cell_height * 2, 0.5 * config.cell_length)
+      rf.rotateX(90 * Math.PI / 180);
+
+      main_group.add(rf)
+
+      let palet_h2 = palet_h_m.clone();
+      palet_h2.translate(-config.cell_length, config.cell_height * 2, 0)
+      palet_h2 = toLocal(palet_h2, m)
+      ggg.merge(palet_h2)
+
+      let palet_h1 = palet_h_m.clone();
+      palet_h1.translate(-config.cell_length, config.cell_height, 0)
+      palet_h1 = toLocal(palet_h1, m)
+      ggg.merge(palet_h1)
+
+      if(m == 0){
+        scene.add(main_group);
+        addToCol(main_group);
+      }else if(m == 1){
+        let main_group2 = main_group.clone();
+        main_group2.rotateY(180 * Math.PI / 180);
+        main_group2.position.set(0,0,-config.cell_length);
+        scene.add(main_group2);
+        addToCol(main_group2);
+      }else if(m == 2){
+        let main_group3 = main_group.clone();
+        main_group3.rotateY(90 * Math.PI / 180);
+        main_group3.position.set(config.cell_width * 2 + config.cell_length, 0, 0);
+        scene.add(main_group3);
+        addToCol(main_group3);
+      }else if(m == 3){
+        let main_group4 = main_group.clone();
+        main_group4.rotateY(270 * Math.PI / 180);
+        main_group4.position.set(config.cell_width + config.cell_length, 0, config.cell_length * 4);
+        scene.add(main_group4);
+        addToCol(main_group4);
+      }
+
+    }
+
+    /* YGOL */
+
+    function toShort(mesh){
+      mesh.translate(2 * config.cell_length, 0, config.cell_length / 2 + config.cell_length / 4)
+      return mesh
+    }
+
+    let s_top = new THREE.Shape();
+    s_top.moveTo(0,config.cell_length + 2);
+    s_top.lineTo(config.cell_length * 2 / 4, config.cell_length + 2);
+    s_top.lineTo(config.cell_length + 2, config.cell_length * 2 / 4);
+    s_top.lineTo(config.cell_length + 2, 0);
+
+    var extrudeSettings = { amount: 7, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 1, bevelThickness: 1 };
+
+    var s_top_m = new THREE.ExtrudeGeometry( s_top, extrudeSettings );
+
+    s_top_m.rotateX(90 * Math.PI / 180);
+    s_top_m.rotateY(90 * Math.PI / 180);
+    s_top_m.translate(-config.cell_length + 1, config.cell_height * 2 + 2, config.cell_length * 1 / 4 - 1)
+    s_top_m = toShort(s_top_m)
+    ggg.merge(s_top_m)
+
+
+    let s_glass = new THREE.Shape();
+    s_glass.moveTo(0,config.cell_length);
+    s_glass.lineTo(config.cell_length * 2 / 4, config.cell_length);
+    s_glass.lineTo(config.cell_length, config.cell_length * 2 / 4);
+    s_glass.lineTo(config.cell_length, 0);
+
+    var extrudeSettings = { amount: config.cell_height, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 1, bevelThickness: 1 };
+
+    var geo2 = new THREE.ExtrudeGeometry( s_glass, extrudeSettings );
+    var s_glass_m = new THREE.Mesh(geo2, glass_material);
+
+    s_glass_m.position.set(-config.cell_length - 4, config.cell_height * 2, config.cell_length * 1 / 4 + 4)
+
+
+    s_glass_m.rotateZ(270 * Math.PI / 180);
+    s_glass_m.rotateY(90 * Math.PI / 180);
+
+    let s_roof = new THREE.Shape();
+    s_roof.moveTo(0,0);
+    s_roof.lineTo(0,config.cell_length + 2);
+    s_roof.lineTo(config.cell_length * 2 / 4, config.cell_length + 2);
+    s_roof.lineTo(config.cell_length + 2, config.cell_length * 2 / 4);
+    s_roof.lineTo(config.cell_length + 2, 0);
+    s_roof.lineTo(0,0);
+
+    var extrudeSettings2 = { amount: 7, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 1, bevelThickness: 1 };
+
+    var s_roof_m = new THREE.ExtrudeGeometry( s_roof, extrudeSettings2 );
+
+    s_roof_m.rotateX(90 * Math.PI / 180);
+    s_roof_m.rotateY(90 * Math.PI / 180);
+    s_roof_m.translate(-config.cell_length + 1, config.cell_height + 4, config.cell_length * 1 / 4 - 1)
+    s_roof_m = toShort(s_roof_m);
+    ggg.merge(s_roof_m)
+
+    let short_wall_group =  new THREE.Object3D();
+
+    let sw = new THREE.PlaneGeometry(config.cell_length / 2, config.cell_height);
+    let sw2 = sw.clone();
+    sw.rotateY(90 * Math.PI / 180);
+    sw.translate(0,config.cell_height / 2,0)
+
+    short_wall_group.position.set(2 * config.cell_length, 0, config.cell_length / 2 + config.cell_length / 4);
+
+    sw2.translate(-config.cell_length * 3 / 4,config.cell_height / 2,-config.cell_length * 3 / 4)
+
+    sw = toShort(sw)
+    sw2 = toShort(sw2)
+
+    ggg.merge(sw)
+    ggg.merge(sw2)
+
+    short_wall_group.add(s_glass_m)
+
+    let palet_v1 = palet_v_m.clone();
+    palet_v1.translate(0, config.cell_height, -1 / 4 * config.cell_length)
+    palet_v1 = toShort(palet_v1)
+
+    let palet_v2 = palet_v_m.clone();
+    palet_v2.translate(- 2 / 4 * config.cell_length, config.cell_height, - 3 / 4 * config.cell_length)
+    palet_v2 = toShort(palet_v2)
+
+    ggg.merge(palet_v1)
+    ggg.merge(palet_v2)
+
+    scene.add(short_wall_group);
+
+    let ggg_buffer = new THREE.BufferGeometry().fromGeometry(ggg);
+    let sss = new THREE.Mesh(ggg_buffer, wall_material);
+    collidableMeshList.push(sss)
+    sss.matrixAutoUpdate = false;
+    sss.updateMatrix();
+    scene.add(sss);
+
+    let ggg_buffer1 = new THREE.BufferGeometry().fromGeometry(ggg_add);
+    let sss1 = new THREE.Mesh(ggg_buffer1, wall_material);
+    sss1.matrixAutoUpdate = false;
+    sss1.updateMatrix();
+    scene.add(sss1);
+  }
+
+
+
+  /* ===== */
+
+  // Models
+  var sphereModel;
+
+  // Load the JSON files and provide callback functions (modelToScene
+
+  loader.load("./roof.json", (geometry, materials) => addRoof(geometry, materials));
+
+  function addRoof(geometry, materials){
+    console.log(materials)
+
+    materials[0] = roof_material
+    materials[1] = new THREE.MeshLambertMaterial({ color: 'rgb(120,120,120)', side: THREE.DoubleSide, wireframe: false });
+
+     var model = new THREE.Mesh(geometry, materials);
+
+     var box = new THREE.Box3().setFromObject(model);
+     console.log( box.min, box.max, box.getSize() );
+
+     let scale = config.cell_length / box.getSize().x;
+
+     model.scale.set(scale, scale, scale);
+     model.position.set(config.cell_length / 2, 180, -config.cell_width / 2);
+
+     scene.add(model)
+
+     let model2 = model.clone();
+     model2.position.set(-1.5 * config.cell_length, 180, -config.cell_width / 2)
+     scene.add(model2)
+
+     let plane = new THREE.Mesh(new THREE.PlaneGeometry(config.cell_length, config.cell_length), roof_material)
+     plane.position.set(-0.5 * config.cell_length, 180, -config.cell_width / 2)
+     plane.rotateX(90 * Math.PI / 180);
+     scene.add(plane)
+
+     let plane2 = plane.clone();
+     plane2.position.set(-0.5 * config.cell_length + 2 * config.cell_length, 180, -config.cell_width / 2);
+     scene.add(plane2);
+
+     let plane3 = plane.clone();
+     plane3.position.set(-0.5 * config.cell_length + 3 * config.cell_length, 180, -config.cell_width / 2 + config.cell_length);
+     scene.add(plane3);
+
+     let plane4 = plane.clone();
+     plane4.position.set(-0.5 * config.cell_length + 3 * config.cell_length, 180, -config.cell_width / 2 + 3 * config.cell_length);
+     scene.add(plane4);
+
+     let plane5 = plane.clone();
+     plane5.position.set(-0.5 * config.cell_length + 2 * config.cell_length, 180, -config.cell_width / 2 + config.cell_length);
+     scene.add(plane5);
+
+     let model3 = model.clone();
+     model3.position.set(2.5 * config.cell_length, 180, -config.cell_width / 2)
+     scene.add(model3)
+
+     let model4 = model.clone();
+     model4.position.set(2.5 * config.cell_length, 180, 3 * config.cell_width / 2)
+     scene.add(model4)
+
+     let model5 = model.clone();
+     model5.position.set(2.5 * config.cell_length, 180, 7 * config.cell_width / 2)
+     scene.add(model5)
+  }
+
+
+
+  /*for(let i = 0; i < map.length; i++){
+    for(let j = 0; j < map[i].length; j++){
+      if(map[i][j] == 1){
+        let lw = l_wall.clone();
+        lw.position.set(config.cell_height / 2);
+      }
+    }
+  }*/
+
+}

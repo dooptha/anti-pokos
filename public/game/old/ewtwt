@@ -1,0 +1,359 @@
+// In this class we define all our meshes and store uploaded blender models
+
+class MeshesManager{
+  constructor(){
+    this.default_material = {
+      wireframe: false,
+      side: THREE.FrontSide,
+      vertexColors: THREE.VertexColors,
+      transparent: false
+    }
+
+    this.materials = {
+      circle_roof_main: this.generateMaterial({color: 'white', side: THREE.DoubleSide}),
+      circle_roof_sec: this.generateMaterial({color: 'rgb(150,150,150)', side: THREE.DoubleSide}),
+      mall_wall_prm: this.generateMaterial({color: 'rgb(245,245,245)'}),
+      mall_wall_sec: this.generateMaterial({color: 'rgb(225,225,225)'}),
+      glass: this.generateMaterial({color: '#3d8e9c', side: THREE.DoubleSide, depthWrite: false, transparent: true, opacity: 0.3})
+    };
+
+    this.top_front_part_height = 25;
+    this.pilaster_width = 8;
+    this.height = 100;
+    this.length = 190;
+    this.width = 5;
+
+    this.models = {};
+    this.meshes = {};
+  }
+
+  generateMaterialNoShadow(params){
+    let mat_params = Object.assign({}, this.default_material, params)
+    return new THREE.MeshBasicMaterial(mat_params);
+  }
+
+  gBasicMaterial(params){
+    let mat_params = Object.assign({}, this.default_material, params)
+    return new THREE.MeshPhongMaterial(mat_params);
+  }
+
+  generateMaterial(params){
+    let mat_params = Object.assign({}, this.default_material, params)
+    return new THREE.MeshLambertMaterial(mat_params);
+  }
+
+  createThreeJsGeometries(){
+    this.meshes.top_front_store_g = this.topFrontPartG();
+    this.meshes.back_wall_g = this.backWall();
+    this.vertical_pilaster_g = this.verticalPilasterG();
+    this.horizontal_pilaster_g = this.horizontalPilasterG();
+  }
+
+  createFromJson(geometry, material, name){
+    this.models[name] = {geometry, material}
+  }
+
+  // MALL DETAILS
+
+  mallFloor(){
+    let g = new THREE.PlaneGeometry(this.length * 20, this.length * 20);
+    let mesh = new THREE.Mesh(g, this.materials.mall_wall_prm);
+    mesh.rotateX(270 * Math.PI / 180);
+    return mesh;}
+
+  mallRoof(){
+    let g = new THREE.PlaneGeometry(this.length, this.length);
+    let mesh = new THREE.Mesh(g, this.materials.mall_wall_prm);
+    mesh.rotateX(90 * Math.PI / 180);
+    return mesh;}
+
+  circleRoof(){
+    let m = [
+      this.materials.circle_roof_main,
+      this.materials.circle_roof_sec
+    ];
+
+    let mesh = new THREE.Mesh(this.models.roof_circle.geometry, m);
+
+    let scale = this.length / new THREE.Box3().setFromObject(mesh).getSize().x;
+    mesh.scale.set(scale, scale, scale);
+
+    return mesh;}
+
+    bridgePillar(){
+      let g = new THREE.BoxGeometry(3, this.height / 2, 3);
+      return new THREE.Mesh(g, this.materials.mall_wall_sec);}
+
+    bridgeGlass(){
+      let g = new THREE.PlaneGeometry(this.length - 14, this.height / 2 - 10);
+      let mesh = new THREE.Mesh(g, this.materials.glass);
+      mesh.rotateY(90 * Math.PI / 180);
+      return mesh;}
+
+    // BRIDGE
+    bridgeFloor(){
+      let g = new THREE.BoxGeometry(this.length, this.pilaster_width, this.length);
+      return new THREE.Mesh(g, this.materials.mall_wall_prm);}
+
+  // STORE CARCASS
+
+  horizontalPilaster(){
+    let g = new THREE.BoxGeometry(this.length, this.pilaster_width, this.pilaster_width);
+    return new THREE.Mesh(g, this.materials.mall_wall_sec);}
+
+  verticalPilaster(){
+    let g = new THREE.BoxGeometry(this.pilaster_width, this.height * 2, this.pilaster_width);
+    return new THREE.Mesh(g, this.materials.mall_wall_sec);}
+
+  roof(m){
+    let mesh = new THREE.Mesh(new THREE.PlaneGeometry(this.length, this.length), m);
+    mesh.rotateX(90 * Math.PI / 180);
+    return mesh;}
+
+  glassWall(m){
+    return new THREE.Mesh(new THREE.PlaneGeometry(this.length, this.height), this.materials.glass);}
+
+  glassWindow(){
+    return new THREE.Mesh(new THREE.PlaneGeometry(this.length / 3, this.height - this.top_front_part_height), this.materials.glass);}
+
+  sideWall(m, params = {}){
+    let g =  new THREE.PlaneGeometry(this.length, params.half ? this.height : this.height * 2);
+    let mesh = new THREE.Mesh(g, params.default_m ? this.materials.mall_wall_sec : m);
+    mesh.rotateY(270 * Math.PI / 180);
+    return mesh; }
+
+  backWall(m, params = {}){
+    let g = new THREE.PlaneGeometry(this.length, params.half ? this.height : this.height);
+    let mesh = new THREE.Mesh(g, m);
+    mesh.rotateY(180 * Math.PI / 180);
+    return mesh; }
+
+  topFrontPart(){
+    return new THREE.Mesh(new THREE.BoxGeometry(this.length, this.top_front_part_height, this.width), this.materials.mall_wall_prm);}
+
+  // CORNER STORE CARCASS
+
+  shortWall(m){
+    let g = new THREE.PlaneGeometry(this.length / 2, this.height);
+    return new THREE.Mesh(g, this.materials.glass);}
+
+  cornerFloor(m){
+    let g = new THREE.Shape();
+    g.moveTo(0,0);
+    g.lineTo(0,config.cell_length + 2);
+    g.lineTo(config.cell_length * 2 / 4, config.cell_length + 2);
+    g.lineTo(config.cell_length + 2, config.cell_length * 2 / 4);
+    g.lineTo(config.cell_length + 2, 0);
+    g.lineTo(0,0);
+
+    g = new THREE.ExtrudeGeometry(g, { amount: 7, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 1, bevelThickness: 1 });
+
+    let mesh = new THREE.Mesh(g, m);
+
+    mesh.rotateX(270 * Math.PI / 180);
+    mesh.rotateY(180 * Math.PI / 180);
+
+    return mesh;}
+
+  cornerGlass(m){
+    let g = new THREE.Shape();
+    g.moveTo(0,config.cell_length);
+    g.lineTo(config.cell_length * 2 / 4, config.cell_length);
+    g.lineTo(config.cell_length, config.cell_length * 2 / 4);
+    g.lineTo(config.cell_length, 0);
+
+    g = new THREE.ExtrudeGeometry(g, { amount: this.height, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 1, bevelThickness: 1 });
+
+    let mesh = new THREE.Mesh(g, this.materials.glass);
+
+    mesh.rotateX(270 * Math.PI / 180);
+    mesh.rotateY(180 * Math.PI / 180);
+
+    return mesh;}
+
+  //// STORES FURNITURE ////
+
+  showcase(m){
+    let mesh = new THREE.Mesh(this.models.showcase.geometry, m);
+    mesh.scale.set(15, 10, 20);
+    return mesh;}
+
+  // HANGERS
+
+  bigHanger(m){
+    let mesh = new THREE.Mesh(this.models.big_hanger.geometry, m);
+    mesh.scale.set(6, 6, 6);
+    return mesh;}
+
+  // PICTURES
+
+  wallDecorRoundPicture(m){
+    let mesh = new THREE.Mesh(this.models.wall_decor_round_picture.geometry, m);
+    mesh.scale.set(22, 25, 22);
+    mesh.rotateY(90  * Math.PI / 180);
+    return mesh;}
+
+  // SHELVES
+
+  shelfFront(m){
+    let mesh = new THREE.Mesh(this.models.shelf_front.geometry, m);
+    mesh.scale.set(6, 5, 6);
+    mesh.rotateY(90  * Math.PI / 180);
+    return mesh;}
+
+  buildInBigShelf(m){
+    let mesh = new THREE.Mesh(this.models.build_in_big_shelf.geometry, m);
+    mesh.scale.set(14, 10, 14);
+    mesh.rotateY(270  * Math.PI / 180);
+    return mesh;}
+
+  buildInShelf(m, params = {}, mesh){
+    if(params.flipped){ console.log('flipped'); mesh = new THREE.Mesh(this.models.build_in_shelf_flipped.geometry, m)}
+    else{ mesh = new THREE.Mesh(this.models.build_in_shelf.geometry, m)}
+    mesh.scale.set(14, 10, 14);
+    mesh.rotateY(90  * Math.PI / 180);
+    return mesh;}
+
+  roundShelves(m){
+    let mesh = new THREE.Mesh(this.models.shelves_round.geometry, m);
+    mesh.scale.set(17.85,17.85,17.85);
+    mesh.rotateY(90  * Math.PI / 180);
+    return mesh;}
+
+  parseBufferGeometry(raw_geometry, materials){
+    let main_geometry = new THREE.Object3D();
+
+    for(let material = 0; material < materials.length; material++){
+      let geometry = new THREE.Geometry();
+
+      geometry.faceVertexUvs = [];
+      geometry.faceVertexUvs.push([]);
+
+      for(let vertice = 0; vertice < raw_geometry.vertices.length; vertice++){
+        geometry.vertices.push(raw_geometry.vertices[vertice]);
+      }
+
+      for(let face = 0; face < raw_geometry.faces.length; face++){
+        if(raw_geometry.faces[face].materialIndex == material){
+          geometry.faces.push(raw_geometry.faces[face]);
+          geometry.faceVertexUvs[0].push(raw_geometry.faceVertexUvs[0][face]);
+        }
+      }
+
+      main_geometry.add(new THREE.Mesh(geometry, materials[material]));
+    }
+
+    return main_geometry;
+  }
+
+  shoesStore(materials){
+    //let mesh = new THREE.Mesh(this.models.shoes_store.geometry, [materials[0], materials[1], materials[2], this.models.shoes_store.material[3]])
+    let mesh = this.parseBufferGeometry(this.models.shoes_store.geometry, [materials[0], materials[1], materials[2], materials[3]]);
+
+    mesh.scale.set(23.2, 23.2, 23.2);
+    mesh.rotateY(180  * Math.PI / 180);
+    return mesh;}
+
+  cosmeticShop(m){
+    console.log(this.models.shoes_store.geometry);
+
+
+
+    let mesh = new THREE.Mesh(this.models.shoes_store.geometry, [m[0], m[1], this.materials.glass]);
+    mesh.scale.set(23.2, 23.2, 23.2);
+    mesh.rotateY(180  * Math.PI / 180);
+    return mesh;}
+
+  mensShop(m){
+    let mesh = new THREE.Mesh(this.models.mens_shop.geometry, m);
+    mesh.scale.set(23.2, 23.2, 23.2);
+    mesh.rotateY(270  * Math.PI / 180);
+    return mesh;}
+
+  // TABLES
+
+  borderTable(m){
+    let mesh = new THREE.Mesh(this.models.border_table.geometry, m);
+    mesh.scale.set(9,8,9);
+    mesh.rotateY(90  * Math.PI / 180);
+    return mesh;}
+
+  ladiesTable(m){
+    let mesh = new THREE.Mesh(this.models.ladies_table.geometry, m);
+    mesh.scale.set(7,5,7);
+    mesh.rotateY(90  * Math.PI / 180);
+    return mesh;}
+
+
+  // SHOES FURNITURE
+
+
+
+  shelfCenter(m){
+    let g = new THREE.BoxGeometry(this.length - 7, 2, 20);
+    return new THREE.Mesh(g, m);}
+
+  shelfLeft(m){
+    let g = new THREE.BoxGeometry(this.length - 12, 2, 20);
+    let mesh = new THREE.Mesh(g, m);
+    mesh.rotateY(90 * Math.PI / 180);
+    return mesh;}
+
+  // BLENDER MODELS
+
+  sign(m){
+    let materials = [this.materials.mall_wall_sec, m];
+    console.log(this.models.sign)
+    let mesh = new THREE.Mesh(this.models.sign.geometry, materials);
+    mesh.scale.set(10,10,10);
+    return mesh;}
+
+  kokoroChandelier(m){
+    let mesh = new THREE.Mesh(this.models.kokoro_chandelier.geometry, m);
+    mesh.scale.set(12,12,12);
+    return mesh;}
+
+  kokoroPouffe(m){
+    let mesh = new THREE.Mesh(this.models.kokoro_pouffe_medium.geometry, m);
+    mesh.scale.set(10,10,10);
+    return mesh;}
+
+  squarePouffeMedium(m){
+    let mesh = new THREE.Mesh(this.models.square_pouffe_medium.geometry, m);
+    mesh.scale.set(12,12,12);
+    return mesh;}
+
+  squarePouffeSmall(m){
+    let mesh = new THREE.Mesh(this.models.square_pouffe_small.geometry, m);
+    mesh.scale.set(12,12,12);
+    return mesh;}
+
+  // SPRITES
+
+  item(texture){
+    let m = new THREE.SpriteMaterial({ map: texture });
+    let mesh = new THREE.Sprite(m);
+    mesh.scale.set(10, 10);
+    return mesh;}
+
+
+  escalator(clip, g = this.models.escalator.geometry){
+    let m = [
+      this.generateMaterial({ color: 'rgb(240, 240, 240)' }),
+      this.generateMaterial({ color: 'rgb(230, 230, 230)' }),
+      this.generateMaterial({ color: 'white' }),
+      this.generateMaterial({ color: 'rgb(60, 60, 60)' }),
+    ];
+    m.forEach((me) => {
+      me.skinning = true;
+    })
+
+    let mesh = new THREE.SkinnedMesh(g, m);
+    mesh.scale.set(2.5,2.6,3);
+    mixers.push(new THREE.AnimationMixer(mesh));
+    action.move.push(mixers[clip].clipAction(g.animations[clip]));
+    action.move[clip].setLoop(THREE.LoopRepeat);
+
+    return mesh;
+  }
+}
