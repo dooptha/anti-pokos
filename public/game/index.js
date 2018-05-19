@@ -7,19 +7,20 @@ window.Game = (function () {
     const gameContainer = document.getElementById('game-container');
     const loginContainer = document.getElementById('login-container');
     player = user;
-    const socket = io({
+    window.socket = io({
       query: `id=${user.id}`
     });
 
     helpers.hideHTML(loginContainer);
     helpers.showHTML(gameContainer);
 
-    socketListeners(socket);
+    socketListeners();
+
+    startGame();
   }
 
-  function socketListeners(socket) {
+  function socketListeners() {
     socket.on('start:game', data => console.log(data));
-
     socket.on('console:message', message => log.message(message));
   }
 
