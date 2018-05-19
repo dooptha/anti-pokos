@@ -2,10 +2,30 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/lib/bulma.css' />
+    <link rel='stylesheet' href='/stylesheets/index.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+  <div id="login-container">
+    <div class="columns is-centered is-mobile is-multiline has-text-centered">
+      <div class="column is-12 project-name"><%= title %></div>
+      <div class="column is-narrow">
+        <div class="login-form">
+          <label class="label username" for="username">enter your username</label>
+          <input id="username" placeholder="Pukich" name="username" type="text"/>
+          <br>
+          <button id="login-button" class="button is-primary">Play!</button>
+        </div>
+      </div>
+    </div>
+    <div id="logo">Triple Baka Production</div>
+  </div>
+  <div id="game-container" style="display: none;">
+    <h1> Game loaded</h1>
+  </div>
+  <script src="/javascript/lib/socket.io.js"></script>
+  <script src="/javascript/Helpers.js"></script>
+  <script src="/game/index.js"></script>
+  <script src="/javascript/index.js"></script>
   </body>
 </html>

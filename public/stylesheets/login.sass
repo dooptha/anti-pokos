@@ -1,0 +1,46 @@
+@import "constants.sass"
+
+#login-screen
+  margin-top: 100px
+
+#logo
+  position: absolute
+  left: 0
+  bottom: 0
+  font-size: 20px
+
+.project-name
+  font-size: 36px
+  font-style: italic
+  font-weight: bolder
+  font-family: Damascus, serif
+  color: $light_color
+
+.login-form
+  padding: 20px
+  margin-top: 40%
+  background-color: $light_color
+  border: 1px solid $middle_color
+  border-radius: 5px
+
+  label.username
+    font-style: italic
+
+  & button#login-button
+    margin-top: 20px
+    background-color: $middle_color
+    color: $light_color
+    &:hover
+      background-color: $light_color_hover
+
+  & input
+    background-color: transparent
+    color: $dark_color
+    height: 30px
+    font-weight: bold
+    font-size: 14px
+    border: none
+    border-bottom: 2px solid $middle_color
+
+    &:active, &:checked, &:focus
+      outline: none
