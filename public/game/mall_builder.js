@@ -83,6 +83,21 @@ class MallBuilder{
 
   build(){
 
+    let mat_enemy = [
+      new THREE.MeshLambertMaterial({ color: '#3C54E7' }),
+      new THREE.MeshLambertMaterial({ color: '#7F4400' }),
+      new THREE.MeshLambertMaterial({ color: '#E7DC00' }),
+      new THREE.MeshLambertMaterial({ color: 'white' }),
+      new THREE.MeshLambertMaterial({ color: 'white' }),
+      new THREE.MeshLambertMaterial({ color: '#E70900' }),
+      new THREE.MeshLambertMaterial({ color: '#482F02' })
+    ];
+
+    let enemy = this.meshes.getEnemy('police', mat_enemy);
+    enemy.position.set(672, 0, 1053);
+    scene.add(enemy);
+
+
     let mat = [
       new THREE.MeshLambertMaterial({ color: 'white' }),
       new THREE.MeshLambertMaterial({ color: '#E7C6B8' }),
