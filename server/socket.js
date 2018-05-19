@@ -22,8 +22,9 @@ module.exports = function (io, storage) {
     socket.join(ROOMS.PENDING);
     pendingQuery.set(player.id, player);
 
-    if (pendingQuery.size === 3)
+    if (pendingQuery.size === 3) {
       startGame();
+    }
 
     socket.on('disconnect', function () {
       pendingQuery.delete(player.id);
@@ -41,8 +42,13 @@ module.exports = function (io, storage) {
       pendingQuery.forEach(p => {
         io.to(p.socket).emit('join:room', game.id);
         io.to(p.socket).emit('start:game', data);
+        // showLog('Game will start in 5 seconds...', p.socket);
         pendingQuery.delete(p.id);
       });
+    }
+
+    function showLog(message, target = socket.id) {
+      return io.to(target).emit('console:message', message);
     }
   }
 };

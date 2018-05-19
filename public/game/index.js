@@ -1,5 +1,6 @@
 window.Game = (function () {
   const helpers = window.DOM_Helpers;
+  const log = logger();
   let player = null;
 
   function load(user) {
@@ -19,8 +20,22 @@ window.Game = (function () {
   function socketListeners(socket) {
     socket.on('start:game', data => console.log(data));
 
-    socket.on('a', data => console.log(data));
+    socket.on('console:message', message => log.message(message));
   }
 
   return {load};
 })();
+
+const logger = function() {
+  const container = document.getElementById('console');
+  function message(text) {
+    const html =
+      `<div class="console">
+         <div class="messages">${text}</div>
+       </div>`;
+    const div = document.createElement('div');
+    div.outerHTML = html;
+    container.appendChild(div);
+  }
+  return {message}
+};
