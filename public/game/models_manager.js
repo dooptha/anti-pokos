@@ -15,6 +15,7 @@ class ModelsManager{
       // playersl;
 
       'player',
+      'police',
       'player_collision',
 
       // DECOR
