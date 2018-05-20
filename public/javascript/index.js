@@ -8,6 +8,7 @@ const index = function () {
 
   const loginButton = document.getElementById('login-button');
   const usernameInput = document.getElementById('username');
+  let processed = false;
 
   addFormListeners();
 
@@ -21,6 +22,9 @@ const index = function () {
   }
 
   function sendLoginRequest(e) {
+    if(processed)
+      return;
+    processed = true;
     const data = {
       username: usernameInput.value
     };
