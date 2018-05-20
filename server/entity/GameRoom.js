@@ -26,10 +26,9 @@ class GameRoom {
       return player.id == id;
     });
     
-    if (player.team == 'reimu') {
-      this.reimu.splice(this.reimu.indexOf(player));
-
-      if (this.reimu.length <= 0) {
+    if (this.reimu.indexOf(player) != -1 && player.team == 'reimu') {
+      this.reimu.splice(this.reimu.indexOf(player), 1);
+      if (this.reimu.length === 0) {
         const data = this.getData();
         data.winner = 'kaban';
         this.io.to(this.id).emit('game:end', data);

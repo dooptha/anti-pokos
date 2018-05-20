@@ -34,6 +34,11 @@ window.Game = (function () {
     socket.on('player:died', data => playerDied(data));
     socket.on('player:won', data => playerWon(data));
     socket.on('player:remove', data => {
+      if(data.id == window.player.id) {
+        helpers.removeElement(document.getElementById('game'));
+        return playerDied();
+      }
+
       if (players[data.id]) {
         for (let k = 0; k < players[data.id].children.length; k++) {
           scene.remove(players[data.id].children[k]);
