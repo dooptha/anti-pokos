@@ -40,10 +40,12 @@ class GameRoom {
 
   removePlate(id) {
     this.plates[id] = true;
-    let all_taken = true;
-    this.plates.forEach(plate => {
-      if (!plate) all_taken = false;
-    });
+    let all_taken = false;
+
+    if(this.plates[0] && this.plates[1]){
+      all_taken = true;
+    }
+    
     if (all_taken) {
       const data = this.getData();
       data.winner = 'reimu';
