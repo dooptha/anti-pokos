@@ -5,10 +5,30 @@
   width: 100%
   text-align: center
   color: white
-  #instructions
-    &:hover
-      cursor: pointer
+  #waiting-blocker
+    position: absolute
+    width: 100vw
+    height: 100vh
+    #waiting-instructions
+      position: relative
+      top: 50%
+      left: 50%
+      transform:  translate(-50%, -50%)
+  #blocker
+    display: none
+    position: absolute
+    width: 100vw
+    height: 100vh
+    #instructions
+      position: relative
+      top: 50%
+      left: 50%
+      transform:  translate(-50%, -50%)
+      &:hover
+        cursor: pointer
+
   #action-message-wrapper
+    position: absolute
     width: 100vw
     height: 100vh
 

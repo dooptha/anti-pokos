@@ -3,9 +3,29 @@
   width: 100%;
   text-align: center;
   color: white; }
-  #game-container #instructions:hover {
-    cursor: pointer; }
+  #game-container #waiting-blocker {
+    position: absolute;
+    width: 100vw;
+    height: 100vh; }
+    #game-container #waiting-blocker #waiting-instructions {
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); }
+  #game-container #blocker {
+    display: none;
+    position: absolute;
+    width: 100vw;
+    height: 100vh; }
+    #game-container #blocker #instructions {
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); }
+      #game-container #blocker #instructions:hover {
+        cursor: pointer; }
   #game-container #action-message-wrapper {
+    position: absolute;
     width: 100vw;
     height: 100vh; }
     #game-container #action-message-wrapper #action-message {
