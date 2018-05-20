@@ -105,14 +105,8 @@ class StoresManager{
 
     //
 
-    simple_meshes.add(up);
-    simple_meshes.add(down);
-
-    let upp = up.clone();
-    let downn = down.clone();
-
-    slide_meshes.add(upp);
-    slide_meshes.add(downn);
+    slide_meshes.add(up);
+    slide_meshes.add(down);
 
     // ADD TO BORDERS GROUP
 

@@ -163,7 +163,7 @@ function keyAssigment(delta){
           }
         }
 
-        if(true){
+        if(can_move){
           controls.getObject().translateZ(mov_z * delta);
         }
       }
@@ -186,7 +186,7 @@ function keyAssigment(delta){
           }
         }
 
-        if(true){
+        if(can_move){
           controls.getObject().translateX(mov_x * delta);
         }
       }

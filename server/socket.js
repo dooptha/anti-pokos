@@ -10,7 +10,7 @@ const GameRoom = require('./entity/GameRoom');
 module.exports = function (io, storage) {
   const pendingQuery = [];
   const playingRooms = new Map();
-  const PLAYER_LIMIT = 2;
+  const PLAYER_LIMIT = 3;
 
   io.on('connection', playerConnected);
 
