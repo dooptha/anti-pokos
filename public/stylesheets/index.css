@@ -1,0 +1,156 @@
+#game-container {
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  color: white; }
+  #game-container #eliminate-wrapper {
+    display: none;
+    position: absolute;
+    width: 100vw;
+    height: 100vh; }
+    #game-container #eliminate-wrapper #eliminate {
+      width: 500px;
+      background-color: black;
+      border: 1px solid black;
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); }
+  #game-container #waiting-blocker {
+    position: absolute;
+    width: 100vw;
+    height: 100vh; }
+    #game-container #waiting-blocker #waiting-instructions {
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); }
+  #game-container #blocker {
+    display: none;
+    position: absolute;
+    width: 100vw;
+    height: 100vh; }
+    #game-container #blocker #instructions {
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); }
+      #game-container #blocker #instructions:hover {
+        cursor: pointer; }
+  #game-container #action-message-wrapper {
+    position: absolute;
+    width: 100vw;
+    height: 100vh; }
+    #game-container #action-message-wrapper #action-message {
+      width: 100px;
+      position: relative;
+      display: none;
+      padding: 10px;
+      background-color: transparent;
+      top: 50%;
+      left: 45%;
+      transform: translate(-50%, -50%); }
+      #game-container #action-message-wrapper #action-message img {
+        height: 90px; }
+      #game-container #action-message-wrapper #action-message span {
+        display: block;
+        margin-bottom: 5px; }
+  #game-container #win-wrapper {
+    display: none;
+    position: absolute;
+    width: 100vw;
+    height: 100vh; }
+    #game-container #win-wrapper #win {
+      width: 500px;
+      background-color: black;
+      border: 1px solid black;
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); }
+  #game-container #dead-wrapper {
+    display: none;
+    position: absolute;
+    width: 100vw;
+    height: 100vh; }
+    #game-container #dead-wrapper #dead {
+      width: 500px;
+      background-color: black;
+      border: 1px solid black;
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); }
+
+#console-container {
+  position: absolute;
+  top: 100px;
+  right: 10px;
+  background-color: transparent;
+  height: 220px;
+  width: 200px;
+  overflow: hidden; }
+  #console-container .message {
+    width: 100%;
+    min-height: 40px;
+    padding-bottom: 0;
+    margin-bottom: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px dotted pink; }
+    #console-container .message span.reimu {
+      color: red; }
+    #console-container .message span.kaban {
+      color: aqua; }
+    #console-container .message span.anon {
+      color: #1ca64c; }
+
+#login-screen {
+  margin-top: 100px; }
+
+#logo {
+  position: absolute;
+  left: 10px;
+  color: #93A3BC;
+  bottom: 5px;
+  font-size: 20px; }
+
+.project-name {
+  font-size: 36px;
+  font-style: italic;
+  font-weight: bolder;
+  font-family: Damascus, serif;
+  color: #93A3BC; }
+
+.login-form {
+  padding: 20px;
+  margin-top: 40%;
+  background-color: #93A3BC;
+  border: 1px solid #4F6272;
+  border-radius: 5px; }
+  .login-form label.username {
+    font-style: italic; }
+  .login-form button#login-button {
+    margin-top: 20px;
+    background-color: #4F6272;
+    color: #93A3BC; }
+    .login-form button#login-button:hover {
+      background-color: #6891bc; }
+  .login-form input {
+    background-color: transparent;
+    color: #2F323A;
+    height: 30px;
+    font-weight: bold;
+    font-size: 14px;
+    border: none;
+    border-bottom: 2px solid #4F6272; }
+    .login-form input:active, .login-form input:checked, .login-form input:focus {
+      outline: none; }
+
+html, body {
+  background-color: #2F323A;
+  min-height: 100vh;
+  min-width: 100vw;
+  font-family: "Lucida Grande", Helvetica, Arial, sans-serif; }
+
+/*# sourceMappingURL=index.css.map */
