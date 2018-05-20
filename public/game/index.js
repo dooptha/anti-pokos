@@ -24,6 +24,13 @@ window.Game = (function () {
     socket.on('player:updated', data => updatePlayers(data));
     socket.on('join:room', data => socket.emit('join:room', data));
     socket.on('light:toggle', data => updateLight(data));
+    socket.on('player:remove', data => {
+      for(let k = 0; k < players[data.id].children.length; k++){
+        scene.remove(players[data.id].children[k]);
+      }
+      scene.remove(players[data.id]);
+      delete players[data.id];
+    });
     // socket.on('console:message', message => logger.message(message));
   }
 

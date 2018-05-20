@@ -39,6 +39,11 @@ module.exports = function (io, storage) {
       socket.join(roomName);
     });
 
+    socket.on('player:destroy', function(response){
+      // ПІГОЛЬ ЛОХ
+      io.to(response.gameId).emit('player:remove', { id: response.id });
+    })
+
     socket.on('player:update', function(response){
       io.to(response.gameId).emit('player:updated', response.data);
     })
