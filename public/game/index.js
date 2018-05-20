@@ -21,6 +21,10 @@ window.Game = (function () {
     socket.on('console:message', message => logger.message(message));
     socket.on('start:game', data => {
       window.gameId = data.id;
+      const waiting_blocker = document.getElementById( 'waiting-blocker' );
+      const blocker = document.getElementById( 'blocker' );
+      helpers.hideHTML(waiting_blocker);
+      helpers.showHTML(blocker);
       startGame(data);
     });
     socket.on('player:updated', data => updatePlayers(data));
