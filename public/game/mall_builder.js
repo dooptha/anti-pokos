@@ -113,7 +113,7 @@ class MallBuilder{
           lights_sources.push(flashlight);
 
           let m = new THREE.MeshLambertMaterial({ color: 'red' });
-          let g = new THREE.BoxGeometry(100, 10, 350);
+          let g = new THREE.BoxGeometry(80, 10, 350);
           light_col = new THREE.Mesh(g, m);
           light_col.visible = false;
           light_col.position.set(0,10,-240);
