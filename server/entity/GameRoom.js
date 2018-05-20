@@ -8,9 +8,9 @@ class GameRoom {
     this.players = Array.from(players);
     this.io = io;
     this.id = uuid();
+    this.reimu = [];
+    this.kaban = [];
     this.setupPlayers();
-    this.reimu = []
-    this.kaban = []
   }
 
   destroyGame() {
@@ -20,10 +20,11 @@ class GameRoom {
   }
 
   removePlayer(id) {
-    const player = this.players.find(function (player) {
-      return player.id = id;
+    const player = this.players.filter((player) => {
+      return player.id == id;
     });
-    if (player.team === 'reimu') {
+
+    if (player.team == 'reimu') {
       this.reimu.splice(this.reimu.indexOf(player));
       if (this.reimu.length <= 0) {
         const data = this.getData();
@@ -67,9 +68,12 @@ class GameRoom {
       player.startPlaying();
       player.team = index % 2 == 0 ? teams[0] : teams[1];
 
-      if (player.team === 'reimu')
+      if (player.team == 'reimu') {
+        console.log(this.reimu);
         this.reimu.push(player);
-      if (player.team === 'kaban')
+      }
+
+      if (player.team == 'kaban')
         this.kaban.push(player);
 
       let pos_index = Math.floor(Math.random() * positions.length) + 0;

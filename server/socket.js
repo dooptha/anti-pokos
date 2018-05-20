@@ -73,7 +73,7 @@ module.exports = function (io, storage) {
     function startGame() {
       const players = pendingQuery.splice(0, PLAYER_LIMIT);
       const game = new GameRoom(io, players);
-      playingRooms.add(game.id, game);
+      playingRooms.set(game.id, game);
       const data = game.getData();
       players.forEach(p => {
         io.to(p.socket).emit('join:room', game.id);
