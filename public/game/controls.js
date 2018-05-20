@@ -29,10 +29,10 @@ function keyAssigment(delta){
 
       var collision = boundriesAA.intersectsBox(boundriesBB);
       if(collision){
-        if(lights_sources[i].userData.status){
+        if(lights[i].userData.status == true){
           if(lights[i].userData.source == 'flashlight'){
-            temp_freezed = true;
-            break;
+              temp_freezed = true;
+              break;
           }else{
             let keys = Object.keys(players);
             for(let j = 0; j < keys.length; j++){
@@ -58,7 +58,6 @@ function keyAssigment(delta){
                 }
               }
             }
-
             if(temp_freezed){ break; }
           }
         }
@@ -67,6 +66,11 @@ function keyAssigment(delta){
   }
 
   freezed = temp_freezed;
+
+  if(pressf){
+    window.DOM_Helpers.hideHTML(document.getElementById('eliminate-wrapper'));
+    pressf = false;
+  }
 
   if(!freezed){
     //pos_mesh.scale.set(size, size);
@@ -86,8 +90,10 @@ function keyAssigment(delta){
 
           var collision = firstCC.intersectsBox(secondCC);
           if(collision){
-            console.log('press f')
+            pressf = true;
+            window.DOM_Helpers.showHTML(document.getElementById('eliminate-wrapper'));
             if(keyPressed[KEY.F]){
+              window.DOM_Helpers.hideHTML(document.getElementById('eliminate-wrapper'));
               socket.emit('player:destroy', { gameId, id: keys[i]});
             }
           }

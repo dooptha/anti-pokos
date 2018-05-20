@@ -1,4 +1,4 @@
-var camera, scene, light_col, player_collusion, freezed = false, enemies = [], players = {}, players_collisions = [], lights_sources = [], lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
+var camera, scene, light_col, pressf = false, player_collusion, freezed = false, enemies = [], players = {}, players_collisions = [], lights_sources = [], lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
 
 function initThreeJs(){
   scene = new THREE.Scene();
@@ -84,6 +84,34 @@ function initThreeJs(){
   clock = new THREE.Clock();
 }
 
+function flashlightt(){
+  if(player.team == 'reimu'){
+    toggleFlashlight(1);
+    let clicks = 0;
+    const message = document.getElementById('action-message');
+    const TIMEOUT = 32500;
+
+    setTimeout(offFlashLight, TIMEOUT);
+
+    document.addEventListener('keyup', e => {
+      if (e.keyCode === 34 || e.keyCode === 39) {
+        clicks--;
+      }
+      if (clicks <= 0) {
+        toggleFlashlight(1);
+        window.DOM_Helpers.hideHTML(message);
+        setTimeout(offFlashLight, TIMEOUT)
+      }
+    });
+
+    function offFlashLight() {
+      toggleFlashlight(0);
+      window.DOM_Helpers.showHTML(message);
+      clicks = 7;
+    }
+  }
+}
+
 function initCamera(data){
 
   player.team = data.team;
@@ -135,21 +163,44 @@ function initCamera(data){
     let data = {
       position: controls.getObject().position,
       rotation: controls.getObject().rotation,
-      id: player.id
+      id: player.id,
+      light: light_col.userData.status || false
     };
 
     window.socket.emit('player:update', { gameId, data });
   }, 100);
+
+  flashlightt();
+}
+
+function toggleFlashlight(intensity){
+  console.log(intensity);
+  spotlight.intensity = intensity;
+  if(intensity){
+    light_col.userData.status = true;
+  }else{
+    light_col.userData.status = false;
+  }
 }
 
 function updatePlayers(data){
 
-  const { id, position, rotation } = data;
+  const { id, position, rotation, light } = data;
 
   if(id != player.id){
     if(players[id]){
       players[id].position.set(position.x, position.y - 45, position.z);
       players[id].rotation.set(rotation._x, rotation._y, rotation._z);
+
+      if(players[id].userData.team == 'reimu'){
+        if(light){
+          players[id].children[2].userData.status = true;
+          players[id].children[3].intensity = 1;
+        }else{
+          players[id].children[2].userData.status = false;
+          players[id].children[3].intensity = 0;
+        }
+      }
     }else{
       console.log('no such player')
     }
@@ -161,9 +212,9 @@ function updateLight(data){
     if(lights[i].userData.source == 'static'){
       lights_sources[i].intensity = data.intensivity;
       if(data.intensivity){
-        lights_sources[i].userData = { status: true }
+        lights[i].userData.status = true;
       }else{
-        lights_sources[i].userData = { status: false }
+        lights[i].userData.status = false;
       }
     }
   }
