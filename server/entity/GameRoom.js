@@ -10,8 +10,10 @@ class GameRoom {
     this.id = uuid();
     this.reimu = [];
     this.kaban = [];
-    this.platesCount = 0;
-    this.plates = [];
+    this.plates = {
+      0: false,
+      1: false
+    };
     this.setupPlayers();
   }
 
@@ -25,7 +27,7 @@ class GameRoom {
     const player = this.players.find(player => {
       return player.id == id;
     });
-    
+
     if (this.reimu.indexOf(player) != -1 && player.team == 'reimu') {
       this.reimu.splice(this.reimu.indexOf(player), 1);
       if (this.reimu.length === 0) {
@@ -37,8 +39,12 @@ class GameRoom {
   }
 
   removePlate(id) {
-    this.plates.splice(this.plates.indexOf(id), 1);
-    if(this.plates.length === 0) {
+    this.plates[id] = true;
+    let all_taken = true;
+    this.plates.map(plate => {
+      if (!plate) all_taken = false;
+    });
+    if (all_taken) {
       const data = this.getData();
       data.winner = 'reimu';
       this.io.to(this.id).emit('game:end', data);
