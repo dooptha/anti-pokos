@@ -41,7 +41,7 @@ class GameRoom {
   removePlate(id) {
     this.plates[id] = true;
     let all_taken = true;
-    this.plates.map(plate => {
+    this.plates.forEach(plate => {
       if (!plate) all_taken = false;
     });
     if (all_taken) {
@@ -86,8 +86,6 @@ class GameRoom {
       player.team = index % 2 == 0 ? teams[0] : teams[1];
 
       if (player.team == 'reimu') {
-        this.plates.push(this.platesCount);
-        this.platesCount++;
         this.reimu.push(player);
       }
 
