@@ -68,7 +68,7 @@ function startGame(data){
 
 function updateCurrenPositionLabel(){
 
-  label.innerHTML = `
+  /*label.innerHTML = `
     current position:
     x: ${controls.getObject().position.x.toFixed(2)}
     z: ${controls.getObject().position.z.toFixed(2)}
@@ -84,7 +84,7 @@ function updateCurrenPositionLabel(){
     z: ${player.position.y.toFixed(2)}
     y: ${player.position.z.toFixed(2)}
     s: ${player.scale.x}`;
-  }
+  }*/
 }
 
 function start(data){
