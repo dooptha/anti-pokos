@@ -68,14 +68,14 @@ function startGame(data){
 
 function updateCurrenPositionLabel(){
 
-  /*label.innerHTML = `
+  label.innerHTML = `
     current position:
     x: ${controls.getObject().position.x.toFixed(2)}
     z: ${controls.getObject().position.z.toFixed(2)}
     y: ${controls.getObject().position.y.toFixed(2)}
     ${window.innerWidth}
     ${window.innerHeight}
-  `;*/
+  `;
 
   if(false){
     label.innerHTML += `<br />

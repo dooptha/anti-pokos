@@ -66,6 +66,10 @@ module.exports = function (io, storage) {
       }
     });
 
+    socket.on('plate:disable', function(response){
+      io.to(response.gameId).emit('plate:disabled', { index: response.index });
+    })
+
     socket.on('player:update', function(response){
       io.to(response.gameId).emit('player:updated', response.data);
     });

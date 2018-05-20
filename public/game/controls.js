@@ -19,6 +19,17 @@ function keyAssigment(delta){
 
   let mov_x, mov_z, temp_freezed = false;
 
+  if(player.team == 'reimu'){
+    let plat_raycaster = new THREE.Raycaster(controls.getObject().position, new THREE.Vector3(0, -1, 0), 0, 80);
+    var plat_intersects = plat_raycaster.intersectObjects(plats, true);
+
+    if(plat_intersects.length > 0){
+      if(plat_intersects[0].object.userData.active){
+        askToDisablePlate(plat_intersects[0].object);
+      }
+    }
+  }
+
   if(player.team == 'kaban'){
     //console.log(player);
 

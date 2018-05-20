@@ -27,6 +27,7 @@ window.Game = (function () {
       startGame(data);
     });
     socket.on('player:updated', data => updatePlayers(data));
+    socket.on('plate:disabled', data => disablePlate(data));
     socket.on('join:room', data => socket.emit('join:room', data));
     socket.on('light:toggle', data => updateLight(data));
     socket.on('player:died', data => playerDied(data));

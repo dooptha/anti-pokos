@@ -1,4 +1,4 @@
-var camera, scene, light_col, pressf = false, player_collusion, freezed = false, enemies = [], players = {}, players_collisions = [], lights_sources = [], lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
+var camera, scene, light_col, pressf = false, plats = [], player_collusion, freezed = false, enemies = [], players = {}, players_collisions = [], lights_sources = [], lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
 
 function initThreeJs(){
   scene = new THREE.Scene();
@@ -174,7 +174,6 @@ function initCamera(data){
 }
 
 function toggleFlashlight(intensity){
-  console.log(intensity);
   spotlight.intensity = intensity;
   if(intensity){
     light_col.userData.status = true;
@@ -219,6 +218,20 @@ function updateLight(data){
     }
   }
 }
+
+function askToDisablePlate(obj){
+  let index = plats.indexOf(obj);
+
+  socket.emit('plate:disable', { gameId, index })
+}
+
+function disablePlate(data){
+  plats[data.index].material = new THREE.MeshStandardMaterial({ color: 'gray' });
+  plats[data.index].userData.active = false;
+  plats[data.index].position.y -= 5;
+}
+
+
 
 function animate(){
 

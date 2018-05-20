@@ -85,6 +85,24 @@ class MallBuilder{
   }
 
   build(){
+    let reimus = 0;
+    for(let i = 0; i < this.data.players.length; i++){
+      if(this.data.players[i].team == 'reimu'){
+        reimus++;
+      }
+    }
+
+    for(let i = 0; i < reimus; i++){
+      let g = new THREE.BoxGeometry(80, 10, 80);
+      let m = new THREE.MeshStandardMaterial({ color: 'green' });
+      let mesh = new THREE.Mesh(g, m);
+      mesh.userData = { active: true };
+      mesh.position.set(platforms[i][0], platforms[i][1], platforms[i][2]);
+      plats.push(mesh);
+      scene.add(mesh);
+    }
+
+    console.log('reimus: ' + reimus)
 
     for(let i = 0; i < this.data.players.length; i++){
       if(player.id != this.data.players[i].id){
