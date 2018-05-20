@@ -8,7 +8,8 @@ const ROOMS = {
 const GameRoom = require('./entity/GameRoom');
 
 module.exports = function (io, storage) {
-  const pendingQuery = new Map();
+  const pendingQuery = [];
+  const PLAYER_LIMIT = 2;
 
   io.on('connection', playerConnected);
 
@@ -23,40 +24,38 @@ module.exports = function (io, storage) {
     player.setSocket(socket.id);
 
     socket.join(ROOMS.PENDING);
-    pendingQuery.set(player.id, player);
+    pendingQuery.push(player);
+    const playerNeeded = PLAYER_LIMIT - pendingQuery.length;
 
-    if (pendingQuery.size === 2) {
+    if (playerNeeded <= 0) {
       startGame();
+    } else {
+      showLog(`Hello, <span class="anon">${player.username}</span>! ${playerNeeded} more players needed`, ROOMS.PENDING);
     }
 
-    showLog(`Hello, <span class="anon">${player.username}</span>!`);
-
     socket.on('disconnect', function () {
-      pendingQuery.delete(player.id);
+      pendingQuery.splice(pendingQuery.indexOf(player), 1);
       storage.delete(player.id);
     });
 
     socket.on('join:room', function (roomName) {
-      console.log(roomName);
       socket.join(roomName);
     });
 
     socket.on('player:update', function(response){
       io.to(response.gameId).emit('player:updated', response.data);
-    })
+    });
 
     function startGame() {
-      const players = pendingQuery.values();
+      const players = pendingQuery.splice(0, PLAYER_LIMIT);
       const game = new GameRoom(io, players);
       const data = game.getData();
-      pendingQuery.forEach(p => {
+      players.forEach(p => {
         io.to(p.socket).emit('join:room', game.id);
         io.to(p.socket).emit('start:game', data);
-        // showLog('Game will start in 5 seconds...', p.socket);
-        pendingQuery.delete(p.id);
+        showLog('Game will start in 5 seconds...', p.socket);
       });
       game.startGame();
-
     }
 
     function showLog(message, target = socket.id) {
