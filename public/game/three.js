@@ -96,11 +96,11 @@ function flashlightt(){
     document.addEventListener('keyup', e => {
       if (e.keyCode === 34 || e.keyCode === 39) {
         clicks--;
-      }
-      if (clicks <= 0) {
-        toggleFlashlight(1);
-        window.DOM_Helpers.hideHTML(message);
-        setTimeout(offFlashLight, TIMEOUT)
+        if (clicks === 0) {
+          toggleFlashlight(1);
+          window.DOM_Helpers.hideHTML(message);
+          setTimeout(offFlashLight, TIMEOUT)
+        }
       }
     });
 
