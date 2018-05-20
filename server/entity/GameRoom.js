@@ -26,23 +26,11 @@ class GameRoom {
 
     this.lightTimer = setInterval(() => {
       this.light_time += 1;
-      if(this.light_time > 25){ this.light_time = 0; }
+      if(this.light_time > 2){ this.light_time = 0; }
 
-      if(this.light_time == 24){
+      if(this.light_time == 2){
         this.toggleLight(1);
-      }else if(this.light_time == 23){
-        this.toggleLight(0);
-      }else if(this.light_time == 20){
-        this.toggleLight(1);
-      }else if(this.light_time == 14){
-        this.toggleLight(0);
-      }else if(this.light_time == 10){
-        this.toggleLight(1);
-      }else if(this.light_time == 7){
-        this.toggleLight(0);
-      }else if(this.light_time == 4){
-        this.toggleLight(1);
-      }else if(this.light_time == 2){
+      }else if(this.light_time == 1){
         this.toggleLight(0);
       }
     }, 250)

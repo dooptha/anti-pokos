@@ -1,4 +1,4 @@
-var camera, scene, light_col, player_collusion, freezed = false, enemies = [], players = {}, lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
+var camera, scene, light_col, player_collusion, freezed = false, enemies = [], players = {}, lights_sources = [], lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
 
 function initThreeJs(){
   scene = new THREE.Scene();
@@ -11,11 +11,17 @@ function initThreeJs(){
 
   pointLight = new THREE.PointLight('white', 0.5, 250);
   pointLight.position.set(872, 100, 1053);
+  pointLight.userData = { status: true };
+  lights_sources.push(pointLight);
+
   scene.add(pointLight);
 
   let gp = new THREE.BoxGeometry(420, 10, 420);
   pointl_col = new THREE.Mesh(gp, m);
   pointl_col.position.set(872, 5, 1053);
+  pointl_col.userData = { source: 'static' };
+
+  lights.push(pointl_col);
 
   //var light = new THREE.AmbientLight('white'); // soft white light
   //scene.add( light );
@@ -151,7 +157,16 @@ function updatePlayers(data){
 }
 
 function updateLight(data){
-  pointLight.intensity = data.intensivity;
+  for(let i = 0; i < lights.length; i++){
+    if(lights[i].userData.source == 'static'){
+      lights_sources[i].intensity = data.intensivity;
+      if(data.intensivity){
+        lights_sources[i].userData = { status: true }
+      }else{
+        lights_sources[i].userData = { status: false }
+      }
+    }
+  }
 }
 
 function animate(){
