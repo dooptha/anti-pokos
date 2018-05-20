@@ -39,6 +39,12 @@ window.Game = (function () {
       scene.remove(players[data.id]);
       delete players[data.id];
     });
+
+    socket.on('game:end', id => {
+      const winner = 'reimu' || 'kaban';
+      // stop game
+      socket.emit('game:ended', {id, winner});
+    });
   }
 
   function playerDied(data) {

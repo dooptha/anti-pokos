@@ -9,6 +9,7 @@ const GameRoom = require('./entity/GameRoom');
 
 module.exports = function (io, storage) {
   const pendingQuery = [];
+  const playingRooms = new Map();
   const PLAYER_LIMIT = 2;
 
   io.on('connection', playerConnected);
@@ -38,14 +39,32 @@ module.exports = function (io, storage) {
       storage.delete(player.id);
     });
 
+    socket.on('leave:room', function (roomName) {
+      socket.leave(roomName);
+    });
+
     socket.on('join:room', function (roomName) {
       socket.join(roomName);
     });
 
     socket.on('player:destroy', function(response){
-      // ПІГОЛЬ ЛОХ
-      io.to(response.gameId).emit('player:remove', { id: response.id });
-    })
+      const playerId = response.id;
+      const gameRoomId = response.gameId;
+
+      io.to(playerId).emit('leave:room', gameRoomId);
+      io.to(gameRoomId).emit('player:remove', { id: playerId });
+      const game = playingRooms.get(gameRoomId);
+      if(game)
+        game.removePlayer();
+    });
+
+    socket.on('game:ended', function (id) {
+      const game = playingRooms.get(id);
+      if(game){
+        game.destroyGame();
+        playingRooms.delete(id);
+      }
+    });
 
     socket.on('player:update', function(response){
       io.to(response.gameId).emit('player:updated', response.data);
@@ -54,6 +73,7 @@ module.exports = function (io, storage) {
     function startGame() {
       const players = pendingQuery.splice(0, PLAYER_LIMIT);
       const game = new GameRoom(io, players);
+      playingRooms.add(game.id, game);
       const data = game.getData();
       players.forEach(p => {
         io.to(p.socket).emit('join:room', game.id);

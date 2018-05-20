@@ -9,28 +9,46 @@ class GameRoom {
     this.io = io;
     this.id = uuid();
     this.setupPlayers();
+    this.reimu = []
+    this.kaban = []
   }
 
-  destroyGame(){
-    if(this.lightTimer){
+  destroyGame() {
+    if (this.lightTimer) {
       clearInterval(this.lightTimer);
     }
   }
 
-  toggleLight(intensivity){
-    this.io.to(this.id).emit('light:toggle', { intensivity });
+  removePlayer(id) {
+    const player = this.players.find(function (player) {
+      return player.id = id;
+    });
+    if (player.team === 'reimu') {
+      this.reimu.splice(this.reimu.indexOf(player));
+      if (this.reimu.length <= 0) {
+        const data = this.getData();
+        data.winner = 'kaban';
+        this.io.to(this.id).emit('game:end', data);
+      }
+    }
   }
 
-  startGame(){
+  toggleLight(intensivity) {
+    this.io.to(this.id).emit('light:toggle', {intensivity});
+  }
+
+  startGame() {
     this.light_time = 0;
 
     this.lightTimer = setInterval(() => {
       this.light_time += 1;
-      if(this.light_time > 2){ this.light_time = 0; }
+      if (this.light_time > 2) {
+        this.light_time = 0;
+      }
 
-      if(this.light_time == 2){
+      if (this.light_time == 2) {
         this.toggleLight(1);
-      }else if(this.light_time == 1){
+      } else if (this.light_time == 1) {
         this.toggleLight(0);
       }
     }, 250)
@@ -48,6 +66,11 @@ class GameRoom {
     this.players.forEach((player, index) => {
       player.startPlaying();
       player.team = index % 2 == 0 ? teams[0] : teams[1];
+
+      if (player.team === 'reimu')
+        this.reimu.push(player);
+      if (player.team === 'kaban')
+        this.kaban.push(player);
 
       let pos_index = Math.floor(Math.random() * positions.length) + 0;
       player.position = positions[pos_index];
