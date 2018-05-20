@@ -20,8 +20,8 @@ window.Game = (function () {
     socket.on('console:message', message => logger.message(message));
     socket.on('start:game', data => {
       window.gameId = data.id;
-      const waiting_blocker = document.getElementById( 'waiting-blocker' );
-      const blocker = document.getElementById( 'blocker' );
+      const waiting_blocker = document.getElementById('waiting-blocker');
+      const blocker = document.getElementById('blocker');
       helpers.hideHTML(waiting_blocker);
       helpers.showHTML(blocker);
       startGame(data);
@@ -29,21 +29,37 @@ window.Game = (function () {
     socket.on('player:updated', data => updatePlayers(data));
     socket.on('plate:disabled', data => disablePlate(data));
     socket.on('join:room', data => socket.emit('join:room', data));
+    socket.on('leave:room', data => socket.emit('leave:room', data));
     socket.on('light:toggle', data => updateLight(data));
     socket.on('player:died', data => playerDied(data));
     socket.on('player:won', data => playerWon(data));
     socket.on('player:remove', data => {
-      for(let k = 0; k < players[data.id].children.length; k++){
-        scene.remove(players[data.id].children[k]);
+      if (players[data.id]) {
+        for (let k = 0; k < players[data.id].children.length; k++) {
+          scene.remove(players[data.id].children[k]);
+        }
+        scene.remove(players[data.id]);
+        delete players[data.id];
       }
-      scene.remove(players[data.id]);
-      delete players[data.id];
     });
 
-    socket.on('game:end', id => {
-      const winner = 'reimu' || 'kaban';
+    socket.on('game:end', data => {
+      console.log("asdasd", data);
+      helpers.removeElement(document.getElementById('game'));
+      if (data.winner == 'kaban') {
+        if (window.player.team == 'reimu')
+          return playerDied();
+        else
+          playerWon();
+      }
+      if (data.winner == 'reimu') {
+        if (window.player.team == 'reimu')
+          return playerWon();
+        else
+          playerDied();
+      }
       // stop game
-      socket.emit('game:ended', {id, winner});
+      socket.emit('game:ended', data.id);
     });
   }
 
@@ -51,7 +67,7 @@ window.Game = (function () {
     const container = document.getElementById('dead-wrapper');
     helpers.showHTML(container);
     document.onkeyup = function (e) {
-      if(e.keyCode === 32) {
+      if (e.keyCode === 32) {
         window.location.reload();
       }
     };
@@ -61,7 +77,7 @@ window.Game = (function () {
     const container = document.getElementById('win-wrapper');
     helpers.showHTML(container);
     document.onkeyup = function (e) {
-      if(e.keyCode === 32) {
+      if (e.keyCode === 32) {
         window.location.reload();
       }
     };

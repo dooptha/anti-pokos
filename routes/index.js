@@ -7,7 +7,7 @@ module.exports = function () {
 
   /* GET home page. */
   router.get('/', function (req, res) {
-    return res.render('index', {title: 'anit#pokos'});
+    return res.render('index', {title: 'anti#pokos'});
   });
 
   router.post('/login', function (req, res) {

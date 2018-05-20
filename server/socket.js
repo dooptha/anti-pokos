@@ -55,7 +55,7 @@ module.exports = function (io, storage) {
       io.to(gameRoomId).emit('player:remove', { id: playerId });
       const game = playingRooms.get(gameRoomId);
       if(game)
-        game.removePlayer();
+        game.removePlayer(playerId);
     });
 
     socket.on('game:ended', function (id) {
@@ -67,8 +67,11 @@ module.exports = function (io, storage) {
     });
 
     socket.on('plate:disable', function(response){
+      const game = playingRooms.get(response.gameId);
+      if(game)
+        game.removePlate(response.index);
       io.to(response.gameId).emit('plate:disabled', { index: response.index });
-    })
+    });
 
     socket.on('player:update', function(response){
       io.to(response.gameId).emit('player:updated', response.data);

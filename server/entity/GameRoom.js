@@ -10,6 +10,8 @@ class GameRoom {
     this.id = uuid();
     this.reimu = [];
     this.kaban = [];
+    this.platesCount = 0;
+    this.plates = [];
     this.setupPlayers();
   }
 
@@ -20,17 +22,27 @@ class GameRoom {
   }
 
   removePlayer(id) {
-    const player = this.players.filter((player) => {
+    const player = this.players.find(player => {
       return player.id == id;
     });
-
+    
     if (player.team == 'reimu') {
       this.reimu.splice(this.reimu.indexOf(player));
+
       if (this.reimu.length <= 0) {
         const data = this.getData();
         data.winner = 'kaban';
         this.io.to(this.id).emit('game:end', data);
       }
+    }
+  }
+
+  removePlate(id) {
+    this.plates.splice(this.plates.indexOf(id), 1);
+    if(this.plates.length === 0) {
+      const data = this.getData();
+      data.winner = 'reimu';
+      this.io.to(this.id).emit('game:end', data);
     }
   }
 
@@ -69,7 +81,8 @@ class GameRoom {
       player.team = index % 2 == 0 ? teams[0] : teams[1];
 
       if (player.team == 'reimu') {
-        console.log(this.reimu);
+        this.plates.push(this.platesCount);
+        this.platesCount++;
         this.reimu.push(player);
       }
 
