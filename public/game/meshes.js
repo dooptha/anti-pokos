@@ -88,7 +88,7 @@ class MeshesManager{
     return mesh;
   }
 
-  getPlayer(name, materials){
+  getPlayer(name, materials, id){
     let mesh;
 
     if(name == 'player' || name == 'escalator'){
@@ -102,12 +102,12 @@ class MeshesManager{
       mesh.scale.set(10, 10, 10);
       mesh.rotateY(180  * Math.PI / 180);
 
-      console.log('ok')
-      console.log(this.models.player.geometry)
-
       mixers.push(new THREE.AnimationMixer(mesh));
-      action.stay = mixers[0].clipAction(this.models[name].geometry.animations[1]);
-      action.stay.setLoop(THREE.LoopRepeat);
+      action[id] = {};
+      action[id].stay = mixers[mixers.length - 1].clipAction(this.models[name].geometry.animations[0]);
+      action[id].stay.setLoop(THREE.LoopRepeat);
+      action[id].walk = mixers[mixers.length - 1].clipAction(this.models[name].geometry.animations[2]);
+      action[id].walk.setLoop(THREE.LoopRepeat);
     }else{
 
       mesh = new THREE.SkinnedMesh(this.models[name].geometry, materials);

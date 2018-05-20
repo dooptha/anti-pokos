@@ -118,7 +118,7 @@ class MallBuilder{
 
           let reimu = new THREE.Object3D;
 
-          reimu.add(this.meshes.getPlayer('player', mat));
+          reimu.add(this.meshes.getPlayer('player', mat, this.data.players[i].id));
           reimu.add(this.meshes.getPlayer('player_collision', mat));
           reimu.children[1].visible = false;
 
@@ -140,7 +140,7 @@ class MallBuilder{
           reimu.add(light_col);
           reimu.add(flashlight);
           reimu.add(flashlight.target);
-          reimu.userData = { team: 'reimu' };
+          reimu.userData = { team: 'reimu', clip: 'stay' };
 
           reimu.position.set(this.data.players[i].position[0], this.data.players[i].position[1] - 45, this.data.players[i].position[2]);
 

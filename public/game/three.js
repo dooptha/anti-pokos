@@ -1,4 +1,4 @@
-var camera, scene, light_col, pressf = false, plats = [], player_collusion, freezed = false, enemies = [], players = {}, players_collisions = [], lights_sources = [], lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
+var camera, scene, light_col, pressf = false, plats = [], player_collusion, freezed = false, enemies = [], players = {}, players_collisions = [], lights_sources = [], lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock;
 
 function initThreeJs(){
   scene = new THREE.Scene();
@@ -33,13 +33,6 @@ function initThreeJs(){
   renderer.shadowMap.autoUpdate = false;
 
   //scene.fog = new THREE.Fog(sky_color, 1400, 1500);
-
-  rendererStats	= new THREEx.RendererStats()
-
-  rendererStats.domElement.style.position	= 'absolute'
-  rendererStats.domElement.style.left	= '0px'
-  rendererStats.domElement.style.bottom	= '0px'
-  parent_block.appendChild( rendererStats.domElement )
 
   parent_block.appendChild(renderer.domElement);
 
@@ -185,9 +178,24 @@ function toggleFlashlight(intensity){
 function updatePlayers(data){
 
   const { id, position, rotation, light } = data;
-
   if(id != player.id){
     if(players[id]){
+      if(players[id].userData.team == 'reimu'){
+        if(position.x != players[id].position.x || position.z != players[id].position.z){
+          if(players[id].userData.clip == 'stay'){
+            players[id].userData.clip = 'walk';
+            action[id].stay.stop();
+            action[id].walk.play();
+          }
+        }else{
+          if(players[id].userData.clip == 'walk'){
+            players[id].userData.clip = 'stay';
+            action[id].walk.stop();
+            action[id].stay.play();
+          }
+        }
+      }
+
       players[id].position.set(position.x, position.y - 45, position.z);
       players[id].rotation.set(rotation._x, rotation._y, rotation._z);
 
@@ -266,8 +274,6 @@ function animate(){
   //console.log(spotlight.position)
 
   renderer.render(scene, camera);
-  rendererStats.update(renderer);
-
   //var delta = clock.getDelta();
   //for(let i = 0; i < mixers.length; i++){
   //  mixers[i].update(delta);

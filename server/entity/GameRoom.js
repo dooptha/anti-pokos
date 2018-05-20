@@ -60,16 +60,15 @@ class GameRoom {
 
     let positions = [
       [200, 0, 200],
-      [200, 0, 300],
-      [300, 0, 300]
-    ]
+      [1200, 0, 200],
+      [2000, 0, 200]
+    ];
 
     this.players.forEach((player, index) => {
       player.startPlaying();
       player.team = index % 2 == 0 ? teams[0] : teams[1];
 
       if (player.team == 'reimu') {
-        console.log(this.reimu);
         this.reimu.push(player);
       }
 
