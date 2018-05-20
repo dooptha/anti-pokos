@@ -14,6 +14,7 @@ window.Game = (function () {
     helpers.showHTML(gameContainer);
 
     socketListeners();
+    flashlight();
   }
 
   function socketListeners() {
@@ -28,7 +29,7 @@ window.Game = (function () {
     // socket.on('console:message', message => logger.message(message));
   }
 
-  const logger = (function() {
+  const logger = (function () {
     function message(text) {
       const div = document.createElement('div');
       div.classList.add('message');
@@ -38,8 +39,36 @@ window.Game = (function () {
         helpers.removeElement(div);
       }, 4000)
     }
+
     return {message}
   })();
+
+  function flashlight() {
+    let isWorking = true;
+    let clicks = 0;
+    const message = document.getElementById('action-message');
+    const TIMEOUT = 1500;
+
+    setTimeout(offFlashLight, TIMEOUT);
+
+    document.addEventListener('keyup', e => {
+        if (e.keyCode === 34 || e.keyCode === 39) {
+          clicks--;
+        }
+        if (clicks <= 0) {
+          isWorking = true;
+          helpers.hideHTML(message);
+          setTimeout(offFlashLight, TIMEOUT)
+        }
+      }
+    );
+
+    function offFlashLight() {
+      isWorking = false;
+      helpers.showHTML(message);
+      clicks = 7;
+    }
+  }
 
   return {load, logger};
 })();
