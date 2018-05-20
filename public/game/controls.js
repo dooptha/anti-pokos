@@ -29,8 +29,39 @@ function keyAssigment(delta){
 
       var collision = boundriesAA.intersectsBox(boundriesBB);
       if(collision){
-        temp_freezed = true;
-        break;
+        if(lights_sources[i].userData.status){
+          if(lights[i].userData.source == 'flashlight'){
+            temp_freezed = true;
+            break;
+          }else{
+            let keys = Object.keys(players);
+            for(let j = 0; j < keys.length; j++){
+              if(players[keys[j]].userData.team == 'reimu'){
+                let pos1 = controls.getObject().position;
+                let pos2 = players[keys[j]].position;
+
+                let distance = Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.z - pos2.z, 2));
+
+                let ray_dir = new THREE.Vector3().subVectors(pos1, pos2).normalize();
+                let camera_ray = players[keys[j]].getWorldDirection().clone();
+
+                let angle1 = (360 + Math.round(180 * Math.atan2(ray_dir.x, ray_dir.z) / Math.PI)) % 360;
+                let angle2 = (180 + Math.round(180 * Math.atan2(camera_ray.x, camera_ray.z) / Math.PI)) % 360;
+
+                if(Math.abs(angle1 - angle2) < 30){
+                  let raycaster = new THREE.Raycaster(pos1, ray_dir, 0, distance);
+                  var intersects = raycaster.intersectObjects(collidableMeshList, true);
+                  if(intersects.length == 0){
+                    temp_freezed = true;
+                    break;
+                  }
+                }
+              }
+            }
+
+            if(temp_freezed){ break; }
+          }
+        }
       }
     }
   }
