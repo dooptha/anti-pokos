@@ -8,18 +8,24 @@
   #instructions
     &:hover
       cursor: pointer
-  #action-message
-    position: absolute
-    display: none
-    padding: 10px
-    background-color: transparent
-    top: 30%
-    left: 40%
-    img
-      height: 35px
-    span
-      display: block
-      margin-bottom: 5px
+  #action-message-wrapper
+    width: 100vw
+    height: 100vh
+
+    #action-message
+      width: 100px
+      position: relative
+      display: none
+      padding: 10px
+      background-color: transparent
+      top: 50%
+      left: 45%
+      transform:  translate(-50%, -50%)
+      img
+        height: 90px
+      span
+        display: block
+        margin-bottom: 5px
 
 #console-container
   position: absolute
