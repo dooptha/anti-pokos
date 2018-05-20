@@ -30,7 +30,28 @@ window.Game = (function () {
     socket.on('player:updated', data => updatePlayers(data));
     socket.on('join:room', data => socket.emit('join:room', data));
     socket.on('light:toggle', data => updateLight(data));
-    // socket.on('console:message', message => logger.message(message));
+    socket.on('player:died', data => playerDied(data));
+    socket.on('player:won', data => playerWon(data))
+  }
+
+  function playerDied(data) {
+    const container = document.getElementById('dead-wrapper');
+    helpers.showHTML(container);
+    document.onkeyup = function (e) {
+      if(e.keyCode === 32) {
+        window.location.reload();
+      }
+    };
+  }
+
+  function playerWon(data) {
+    const container = document.getElementById('win-wrapper');
+    helpers.showHTML(container);
+    document.onkeyup = function (e) {
+      if(e.keyCode === 32) {
+        window.location.reload();
+      }
+    };
   }
 
   const logger = (function () {
