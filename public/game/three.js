@@ -1,4 +1,4 @@
-var camera, scene, light_col, player_collusion, freezed = false, enemies = [], players = {}, lights_sources = [], lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
+var camera, scene, light_col, player_collusion, freezed = false, enemies = [], players = {}, players_collisions = [], lights_sources = [], lights = [], mixers = [], action = {}, player_collision, pointl_col, pointLight, clock = new THREE.Clock(), detection_meshes = [], lights_sources = [], cc = 0, time = 0, test_mesh, coof = 0, cink = 11, renderer, spotlight, flashlight = new THREE.Object3D(), slideList = [], label, controls, rendererStats, raycaster, collidableMeshList = [], mixers = [], clock, action = { move: []};
 
 function initThreeJs(){
   scene = new THREE.Scene();

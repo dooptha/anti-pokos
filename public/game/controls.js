@@ -71,8 +71,28 @@ function keyAssigment(delta){
   if(!freezed){
     //pos_mesh.scale.set(size, size);
 
-    if(keyPressed[KEY.F]){
-      action.move.play();
+    if(player.team == 'kaban'){
+      let player_direct = controls.getObject().getWorldDirection();
+      player_direct.x = -player_direct.x;
+      player_direct.z = -player_direct.z;
+
+      let keys = Object.keys(players);
+      let firstCC = new THREE.Box3().setFromObject(player_collusion);
+
+      for(let i = 0; i < keys.length; i++){
+        if(players[keys[i]].userData.team == 'reimu'){
+
+          let secondCC = new THREE.Box3().setFromObject(players[keys[i]].children[1]);
+
+          var collision = firstCC.intersectsBox(secondCC);
+          if(collision){
+            console.log('press f')
+            if(keyPressed[KEY.F]){
+              socket.emit('player:destroy', { gameId, id: keys[i]});
+            }
+          }
+        }
+      }
     }
 
     if(keyPressed[KEY.LEFT]){
