@@ -84,6 +84,7 @@ module.exports = function (io, storage) {
       const data = game.getData();
       players.forEach(p => {
         io.to(p.socket).emit('join:room', game.id);
+        io.to(p.socket).emit('leave:room', ROOMS.PENDING);
         io.to(p.socket).emit('start:game', data);
         showLog('Game will start in 5 seconds...', p.socket);
       });
